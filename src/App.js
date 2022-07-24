@@ -33,26 +33,34 @@ function App() {
                     <input type="text"/>
                 </label>
             </section>
+            <hr />
             <section>
-                <ul>
-                    {list.map(function (item) {
-                        return (
-                            <li key={item.objectID}>
+                <List/>
+            </section>
+            <hr />
+        </main>
+    );
+}
+
+function List() {
+    return (
+        <ul>
+            {list.map(function (item) {
+                return (
+                    <li key={item.objectID}>
                                 <span>
                                     <a href={item.url}>{item.title}</a>
                                 </span>
-                                <span>, author: </span>
-                                <span>{item.author}</span>
-                                <span>, # comments: </span>
-                                <span>{item.num_comments}</span>
-                                <span>, points: </span>
-                                <span>{item.points}</span>
-                            </li>
-                        );
-                    })}
-                </ul>
-            </section>
-        </main>
+                        <span>, author: </span>
+                        <span>{item.author}</span>
+                        <span>, # comments: </span>
+                        <span>{item.num_comments}</span>
+                        <span>, points: </span>
+                        <span>{item.points}</span>
+                    </li>
+                );
+            })}
+        </ul>
     );
 }
 

@@ -17,7 +17,7 @@ const list = [
     },
 ];
 
-function App() {
+const App = () => {
     function echoFun(mesg) {
         return mesg;
     }
@@ -25,7 +25,7 @@ function App() {
     return (
         <main>
             <header>
-                <h1>Hello {echoFun('react 18')} world.</h1>
+                <h1>Hello {echoFun('react')} world.</h1>
             </header>
             <section>
                 <Search/>
@@ -46,35 +46,31 @@ function App() {
     );
 }
 
-function Search() {
-    return (
-        <label>
-            search:
-            <input type="text"/>
-        </label>
-    );
-}
+const Search = () => (
+    <label>
+        search:
+        <input type="text"/>
+    </label>
+);
 
-function List() {
-    return (
-        <ul>
-            {list.map(function (item) {
-                return (
-                    <li key={item.objectID}>
+const List = () => (
+    <ul>
+        {list.map(item => (
+                <li key={item.objectID}>
                                 <span>
                                     <a href={item.url}>{item.title}</a>
                                 </span>
-                        <span>, author: </span>
-                        <span>{item.author}</span>
-                        <span>, # comments: </span>
-                        <span>{item.num_comments}</span>
-                        <span>, points: </span>
-                        <span>{item.points}</span>
-                    </li>
-                );
-            })}
-        </ul>
-    );
-}
+                    <span>, author: </span>
+                    <span>{item.author}</span>
+                    <span>, # comments: </span>
+                    <span>{item.num_comments}</span>
+                    <span>, points: </span>
+                    <span>{item.points}</span>
+                </li>
+            )
+        )
+        }
+    </ul>
+);
 
 export default App;

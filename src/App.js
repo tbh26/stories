@@ -28,17 +28,23 @@ function App() {
                 <h1>Hello {echoFun('react')} world.</h1>
             </header>
             <section>
-                <label>
-                    search
-                    <input type="text"/>
-                </label>
+                <Search/>
             </section>
-            <hr />
+            <hr/>
             <section>
                 <List/>
             </section>
-            <hr />
+            <hr/>
         </main>
+    );
+}
+
+function Search() {
+    return (
+        <label>
+            search:
+            <input type="text"/>
+        </label>
     );
 }
 

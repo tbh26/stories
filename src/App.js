@@ -35,6 +35,13 @@ function App() {
                 <List/>
             </section>
             <hr/>
+            <section>
+                <List/>
+            </section>
+            <hr/>
+            <section>
+                <Search/>
+            </section>
         </main>
     );
 }

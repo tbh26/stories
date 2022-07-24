@@ -25,7 +25,7 @@ function App() {
     return (
         <main>
             <header>
-                <h1>Hello {echoFun('react')} world.</h1>
+                <h1>Hello {echoFun('react 18')} world.</h1>
             </header>
             <section>
                 <Search/>

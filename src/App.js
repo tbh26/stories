@@ -46,12 +46,19 @@ const App = () => {
     );
 }
 
-const Search = () => (
-    <label>
-        search:
-        <input type="text"/>
-    </label>
-);
+const Search = () => {
+    const handleChange = (event) => {
+        console.debug('event; ', event);
+        console.info(`event.target.value: ${event.target.value} `);
+    };
+
+    return (
+        <label>
+            search:
+            <input type="text" onChange={handleChange} />
+        </label>
+    );
+};
 
 const List = () => (
     <ul>

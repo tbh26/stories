@@ -1,4 +1,3 @@
-
 const App = () => {
 
     const techStuff = [
@@ -34,11 +33,11 @@ const App = () => {
             </section>
             <hr/>
             <section>
-                <List list={techStuff} />
+                <List list={techStuff}/>
             </section>
             <hr/>
             <section>
-                <List list={techStuff} />
+                <List list={techStuff}/>
             </section>
             <hr/>
             <section>
@@ -57,7 +56,7 @@ const Search = () => {
     return (
         <label>
             search:
-            <input type="text" onChange={handleChange} />
+            <input type="text" onChange={handleChange}/>
         </label>
     );
 };
@@ -65,21 +64,26 @@ const Search = () => {
 const List = (props) => (
     <ul>
         {props.list.map(item => (
-                <li key={item.objectID}>
-                                <span>
-                                    <a href={item.url}>{item.title}</a>
-                                </span>
-                    <span>, author: </span>
-                    <span>{item.author}</span>
-                    <span>, # comments: </span>
-                    <span>{item.num_comments}</span>
-                    <span>, points: </span>
-                    <span>{item.points}</span>
-                </li>
-            )
-        )
-        }
+            <Item key={item.objectID} item={item}/>
+        ))}
     </ul>
 );
+
+const Item = (props) => {
+    const item = props.item;
+    return (
+        <li>
+            <span>
+                <a href={item.url}>{item.title}</a>
+            </span>
+            <span>, author: </span>
+            <span>{item.author}</span>
+            <span>, # comments: </span>
+            <span>{item.num_comments}</span>
+            <span>, points: </span>
+            <span>{item.points}</span>
+        </li>
+    );
+};
 
 export default App;

@@ -1,5 +1,8 @@
 import {useState} from "react";
 
+
+export const noFilter = '';
+
 const App = () => {
 
     const techStuff = [
@@ -60,27 +63,37 @@ const App = () => {
 
 const Parent = (props) => {
     const items = props.itemslist;
+    const [itemFilter, setItemFilter] = useState(noFilter);
+
+    const handleFilterUpdate = (term) => {
+        setItemFilter(term)
+    }
 
     return (
         <article>
             <section>
-                <Search/>
+                <Search updateSearchTerm={handleFilterUpdate}/>
             </section>
             <hr/>
             <section>
                 <List list={items}/>
             </section>
+            <hr/>
+            <aside>
+                items-filter: &ldquo;{itemFilter}&rdquo;
+            </aside>
         </article>
     );
 }
 
-const Search = () => {
+const Search = (props) => {
     const [searchTerm, setSearchTerm] = useState('');
 
     const handleChange = (event) => {
         console.debug('event; ', event);
         console.info(`event.target.value: ${event.target.value} `);
         setSearchTerm(event.target.value);
+        props.updateSearchTerm(event.target.value);
     };
 
     return (
@@ -90,7 +103,7 @@ const Search = () => {
                 <input type="text" onChange={handleChange}/>
             </label>
             <aside>
-                searching for: {searchTerm}
+                search-term: &ldquo;{searchTerm}&rdquo;
             </aside>
         </section>
     );

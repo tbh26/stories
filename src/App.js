@@ -1,4 +1,4 @@
-import {Fragment, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 
 export const noFilter = '';
 
@@ -101,7 +101,7 @@ const Parent = (props) => {
     }
 
     return (
-        <Fragment>
+        <>
             <section>
                 <Search searchTerm={itemFilter} updateSearchTerm={handleFilterUpdate} />
             </section>
@@ -113,7 +113,7 @@ const Parent = (props) => {
             <aside>
                 =-= {id} filter: &ldquo;{itemFilter}&rdquo; =-=
             </aside>
-        </Fragment>
+        </>
     );
 }
 

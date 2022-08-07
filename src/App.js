@@ -55,7 +55,7 @@ const App = () => {
 
             <Parent itemslist={techStuff}/>
 
-            <br /> <br />
+            <br/> <br/>
 
             <Parent itemslist={otherStuff}/>
 
@@ -96,40 +96,34 @@ const Parent = (props) => {
     );
 }
 
-const Search = (props) => {
-    const {searchTerm, updateSearchTerm} = props;
-    return (
-        <label>
-            search:
-            <input type="text" value={searchTerm} onChange={updateSearchTerm}/>
-        </label>
-    );
-}
+const Search = ({searchTerm, updateSearchTerm}) => (
+    <label>
+        search:
+        <input type="text" value={searchTerm} onChange={updateSearchTerm}/>
+    </label>
+);
 
 
-const List = (props) => (
+const List = ({list}) => (
     <ul>
-        {props.list.map(item => (
+        {list.map(item => (
             <Item key={item.objectID} item={item}/>
         ))}
     </ul>
 );
 
-const Item = (props) => {
-    const item = props.item;
-    return (
-        <li>
-            <span>
-                <a href={item.url}>{item.title}</a>
-            </span>
-            <span>, author: </span>
-            <span>{item.author}</span>
-            <span>, # comments: </span>
-            <span>{item.num_comments}</span>
-            <span>, points: </span>
-            <span>{item.points}</span>
-        </li>
-    );
-};
+const Item = ({item}) => (
+    <li>
+        <span>
+            <a href={item.url}>{item.title}</a>
+        </span>
+        <span>, author: </span>
+        <span>{item.author}</span>
+        <span>, # comments: </span>
+        <span>{item.num_comments}</span>
+        <span>, points: </span>
+        <span>{item.points}</span>
+    </li>
+);
 
 export default App;

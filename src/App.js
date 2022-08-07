@@ -48,14 +48,17 @@ const App = () => {
 
     return (
         <main>
+
             <header>
                 <h1>Hello {echoFun('react')} world.</h1>
             </header>
-            <hr/>
+
             <Parent itemslist={techStuff}/>
-            <hr/>
+
+            <br /> <br />
+
             <Parent itemslist={otherStuff}/>
-            <hr/>
+
         </main>
     );
 }
@@ -79,7 +82,7 @@ const Parent = (props) => {
     return (
         <article>
             <section>
-                <Search updateSearchTerm={handleFilterUpdate}/>
+                <Search searchTerm={itemFilter} updateSearchTerm={handleFilterUpdate}/>
             </section>
             <hr/>
             <section>
@@ -87,7 +90,7 @@ const Parent = (props) => {
             </section>
             <hr/>
             <aside>
-                items-filter: &ldquo;{itemFilter}&rdquo;
+                =-= items-filter: &ldquo;{itemFilter}&rdquo; =-=
             </aside>
         </article>
     );
@@ -96,7 +99,7 @@ const Parent = (props) => {
 const Search = (props) => (
     <label>
         search:
-        <input type="text" onChange={props.updateSearchTerm}/>
+        <input type="text" value={props.searchTerm} onChange={props.updateSearchTerm}/>
     </label>
 )
 

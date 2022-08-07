@@ -61,11 +61,11 @@ const App = () => {
                 <h1>Hello {echoFun('react')} world.</h1>
             </header>
 
-            <Parent itemslist={techStuff} id='tech'/>
+            <Parent items={techStuff} id='tech' />
 
             <br/> <br/>
 
-            <Parent itemslist={otherStuff} id='other'/>
+            <Parent items={otherStuff} id='other' hasFocus />
 
         </main>
     );
@@ -81,9 +81,7 @@ export function useStoredState(key, initialState) {
     return [value, setValue];
 }
 
-const Parent = (props) => {
-    const items = props.itemslist;
-    const id = props.id;
+const Parent = ({items, id, hasFocus = false}) => {
     const key = `${id}.searchTerm`;
     const [itemFilter, setItemFilter] = useStoredState(key, noFilter);
 
@@ -103,7 +101,7 @@ const Parent = (props) => {
     return (
         <>
             <section>
-                <LabeledInput value={itemFilter} onInputChange={handleFilterUpdate}>
+                <LabeledInput value={itemFilter} onInputChange={handleFilterUpdate} hasFocus={hasFocus} >
                     <strong>Search:</strong>
                 </LabeledInput>
             </section>
@@ -119,10 +117,10 @@ const Parent = (props) => {
     );
 }
 
-const LabeledInput = ({type = 'text', value, onInputChange, children}) => (
+const LabeledInput = ({value, onInputChange, type = 'text', hasFocus = false, children}) => (
     <label>
         {children} &nbsp;
-        <input type={type} value={value} onChange={onInputChange}/>
+        <input value={value} onChange={onInputChange} type={type} autoFocus={hasFocus}/>
     </label>
 );
 

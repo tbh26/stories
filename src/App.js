@@ -53,11 +53,11 @@ const App = () => {
                 <h1>Hello {echoFun('react')} world.</h1>
             </header>
 
-            <Parent itemslist={techStuff}/>
+            <Parent itemslist={techStuff} id='tech' />
 
             <br/> <br/>
 
-            <Parent itemslist={otherStuff}/>
+            <Parent itemslist={otherStuff} id='other' />
 
         </main>
     );
@@ -65,10 +65,14 @@ const App = () => {
 
 const Parent = (props) => {
     const items = props.itemslist;
-    const [itemFilter, setItemFilter] = useState(noFilter);
+    const id = props.id;
+    const key = `${id}.searchTerm`;
+    const [itemFilter, setItemFilter] = useState(localStorage.getItem(key) || noFilter);
 
     const handleFilterUpdate = (event) => {
-        setItemFilter(event.target.value)
+        const searchTerm = event.target.value
+        setItemFilter(searchTerm);
+        localStorage.setItem(key, searchTerm);
     }
 
     function storiesFiltered() {
@@ -82,7 +86,7 @@ const Parent = (props) => {
     return (
         <article>
             <section>
-                <Search searchTerm={itemFilter} updateSearchTerm={handleFilterUpdate}/>
+                <Search searchTerm={itemFilter} updateSearchTerm={handleFilterUpdate} />
             </section>
             <hr/>
             <section>

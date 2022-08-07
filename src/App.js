@@ -107,31 +107,34 @@ const Search = ({searchTerm, updateSearchTerm}) => (
 const List = ({list}) => (
     <ul>
         {
-            list.map(({objectID, ...item}) => (
-                <Item key={objectID} {...item} />
+            list.map((item) => (
+                <Item key={item.objectID} item={item} />
             ))
         }
     </ul>
 );
 
-const Item = ({
-                  url,
-                  title,
-                  author,
-                  num_comments,
-                  points
-              }) => (
-    <li>
+const Item = ({ item }) => {
+    const {
+        url,
+        title,
+        author,
+        num_comments,
+        points
+    } = item;
+    return (
+        <li>
         <span>
             <a href={url}>{title}</a>
         </span>
-        <span>, author: </span>
-        <span>{author}</span>
-        <span>, # comments: </span>
-        <span>{num_comments}</span>
-        <span>, points: </span>
-        <span>{points}</span>
-    </li>
-);
+            <span>, author: </span>
+            <span>{author}</span>
+            <span>, # comments: </span>
+            <span>{num_comments}</span>
+            <span>, points: </span>
+            <span>{points}</span>
+        </li>
+    );
+};
 
 export default App;

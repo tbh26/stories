@@ -106,19 +106,26 @@ const Search = ({searchTerm, updateSearchTerm}) => (
 
 const List = ({list}) => (
     <ul>
-        {list.map(item => (
-            <Item key={item.objectID} item={item}/>
-        ))}
+        {
+            list.map((item) => (
+                <Item key={item.objectID}
+                      url={item.url}
+                      title={item.title}
+                      author={item.author}
+                      num_comments={item.num_comments}
+                      points={item.points}/>
+            ))
+        }
     </ul>
 );
 
-const Item = ({item: {
-    url,
-    title,
-    author,
-    num_comments,
-    points }
-}) => (
+const Item = ({
+                  url,
+                  title,
+                  author,
+                  num_comments,
+                  points
+              }) => (
     <li>
         <span>
             <a href={url}>{title}</a>

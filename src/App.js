@@ -65,8 +65,8 @@ const Parent = (props) => {
     const items = props.itemslist;
     const [itemFilter, setItemFilter] = useState(noFilter);
 
-    const handleFilterUpdate = (term) => {
-        setItemFilter(term)
+    const handleFilterUpdate = (event) => {
+        setItemFilter(event.target.value)
     }
 
     return (
@@ -89,9 +89,7 @@ const Parent = (props) => {
 const Search = (props) => (
     <label>
         search:
-        <input type="text" onChange={(e) => {
-            props.updateSearchTerm(e.target.value);
-        }}/>
+        <input type="text" onChange={props.updateSearchTerm}/>
     </label>
 )
 

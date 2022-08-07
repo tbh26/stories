@@ -14,12 +14,28 @@ const App = () => {
             objectID: 0,
         },
         {
+            title: 'Road to React',
+            url: 'https://www.roadtoreact.com/',
+            author: 'Robin Wieruch',
+            num_comments: 3,
+            points: 9,
+            objectID: 13,
+        },
+        {
             title: 'Redux',
             url: 'https://redux.js.org/',
             author: 'Dan Abramov, Andrew Clark',
             num_comments: 2,
             points: 5,
             objectID: 1,
+        },
+        {
+            title: 'Road to GraphQL',
+            url: 'https://www.roadtographql.com/',
+            author: 'Robin Wieruch',
+            num_comments: 2,
+            points: 8,
+            objectID: 14,
         },
     ];
 
@@ -30,15 +46,23 @@ const App = () => {
             author: 'Jojo',
             num_comments: 7,
             points: 1,
-            objectID: 5,
+            objectID: 35,
+        },
+        {
+            title: 'Rebus',
+            url: 'https://puzzle.net/',
+            author: 'Pipo',
+            num_comments: 0,
+            points: 5,
+            objectID: 36,
         },
         {
             title: 'Reductie',
             url: 'https://sale.org/',
             author: 'ac / dc',
             num_comments: 3,
-            points: 12,
-            objectID: 7,
+            points: 3,
+            objectID: 37,
         },
         {
             title: 'Redactie',
@@ -46,7 +70,7 @@ const App = () => {
             author: 'Clark Kent',
             num_comments: 13,
             points: 7,
-            objectID: 9,
+            objectID: 39,
         },
     ];
 
@@ -61,11 +85,11 @@ const App = () => {
                 <h1>Hello {echoFun('react')} world.</h1>
             </header>
 
-            <Parent items={techStuff} id='tech' hasFocus/>
+            <Parent items={techStuff} id='tech'/>
 
             <br/> <br/>
 
-            <Parent items={otherStuff} id='other'/>
+            <Parent items={otherStuff} id='other' hasFocus/>
 
         </main>
     );
@@ -83,6 +107,7 @@ export function useStoredState(key, initialState) {
 
 const Parent = ({items, id, hasFocus = false}) => {
     const key = `${id}.searchTerm`;
+    const [list, updateList] = useState(items);
     const [itemFilter, setItemFilter] = useStoredState(key, noFilter);
 
     const handleFilterUpdate = (event) => {
@@ -92,10 +117,15 @@ const Parent = ({items, id, hasFocus = false}) => {
 
     function storiesFiltered() {
         if (itemFilter === noFilter) {
-            return items;
+            return list;
         } else {
-            return items.filter((story) => story.title.toLowerCase().includes(itemFilter.toLowerCase()));
+            return list.filter((story) => story.title.toLowerCase().includes(itemFilter.toLowerCase()));
         }
+    }
+
+    const removeItem = (id) => {
+        const newList = list.filter((item) => (item.objectID !== id));
+        updateList(newList);
     }
 
     return (
@@ -107,7 +137,7 @@ const Parent = ({items, id, hasFocus = false}) => {
             </section>
             <hr/>
             <section>
-                <List list={storiesFiltered()}/>
+                <List list={storiesFiltered()} deleteItem={removeItem}/>
             </section>
             <hr/>
             <aside>
@@ -135,7 +165,7 @@ const LabeledInput = ({value, onInputChange, type = 'text', hasFocus = false, ch
 }
 
 
-const List = ({list}) => {
+const List = ({list, deleteItem}) => {
     if (list.length === 0) {
         return (
             <section>
@@ -147,7 +177,7 @@ const List = ({list}) => {
             <ul>
                 {
                     list.map((item) => (
-                        <Item key={item.objectID} item={item}/>
+                        <Item key={item.objectID} item={item} purgeItem={deleteItem}/>
                     ))
                 }
             </ul>
@@ -155,25 +185,29 @@ const List = ({list}) => {
     }
 }
 
-const Item = ({item}) => {
+const Item = ({item, purgeItem}) => {
     const {
         url,
         title,
         author,
         num_comments,
-        points
+        points,
+        objectID
     } = item;
     return (
         <li>
-        <span>
-            <a href={url}>{title}</a>
-        </span>
+            <span>
+                <a href={url}>{title}</a>
+            </span>
             <span>, author: </span>
             <span>{author}</span>
             <span>, # comments: </span>
             <span>{num_comments}</span>
             <span>, points: </span>
-            <span>{points}</span>
+            <span>{points} &nbsp; </span>
+            <button type='button' onClick={() => {
+                purgeItem(objectID)
+            }}><strong>X</strong></button>
         </li>
     );
 };

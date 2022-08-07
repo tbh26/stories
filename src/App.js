@@ -21,6 +21,25 @@ const App = () => {
         },
     ];
 
+    const otherStuff = [
+        {
+            title: 'Reactie',
+            url: 'https://example.org/',
+            author: 'Jojo',
+            num_comments: 7,
+            points: 1,
+            objectID: 5,
+        },
+        {
+            title: 'Reductie',
+            url: 'https://sale.org/',
+            author: 'ac / dc',
+            num_comments: 3,
+            points: 12,
+            objectID: 7,
+        },
+    ];
+
     function echoFun(mesg) {
         return mesg;
     }
@@ -33,7 +52,7 @@ const App = () => {
             <hr/>
             <Parent itemslist={techStuff} />
             <hr/>
-            <Parent itemslist={techStuff} />
+            <Parent itemslist={otherStuff} />
             <hr/>
         </main>
     );

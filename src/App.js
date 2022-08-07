@@ -53,9 +53,9 @@ const App = () => {
                 <h1>Hello {echoFun('react')} world.</h1>
             </header>
             <hr/>
-            <Parent itemslist={techStuff} />
+            <Parent itemslist={techStuff}/>
             <hr/>
-            <Parent itemslist={otherStuff} />
+            <Parent itemslist={otherStuff}/>
             <hr/>
         </main>
     );
@@ -86,28 +86,15 @@ const Parent = (props) => {
     );
 }
 
-const Search = (props) => {
-    const [searchTerm, setSearchTerm] = useState('');
+const Search = (props) => (
+    <label>
+        search:
+        <input type="text" onChange={(e) => {
+            props.updateSearchTerm(e.target.value);
+        }}/>
+    </label>
+)
 
-    const handleChange = (event) => {
-        console.debug('event; ', event);
-        console.info(`event.target.value: ${event.target.value} `);
-        setSearchTerm(event.target.value);
-        props.updateSearchTerm(event.target.value);
-    };
-
-    return (
-        <section>
-            <label>
-                search:
-                <input type="text" onChange={handleChange}/>
-            </label>
-            <aside>
-                search-term: &ldquo;{searchTerm}&rdquo;
-            </aside>
-        </section>
-    );
-};
 
 const List = (props) => (
     <ul>

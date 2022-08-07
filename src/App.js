@@ -30,22 +30,28 @@ const App = () => {
             <header>
                 <h1>Hello {echoFun('react')} world.</h1>
             </header>
-            <section>
-                <Search/>
-            </section>
             <hr/>
-            <section>
-                <List list={techStuff}/>
-            </section>
+            <Parent itemslist={techStuff} />
             <hr/>
-            <section>
-                <List list={techStuff}/>
-            </section>
+            <Parent itemslist={techStuff} />
             <hr/>
-            <section>
-                <Search/>
-            </section>
         </main>
+    );
+}
+
+const Parent = (props) => {
+    const items = props.itemslist;
+
+    return (
+        <article>
+            <section>
+                <Search/>
+            </section>
+            <hr/>
+            <section>
+                <List list={items}/>
+            </section>
+        </article>
     );
 }
 

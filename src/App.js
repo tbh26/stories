@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 export const noFilter = '';
 
@@ -72,8 +72,11 @@ const Parent = (props) => {
     const handleFilterUpdate = (event) => {
         const searchTerm = event.target.value
         setItemFilter(searchTerm);
-        localStorage.setItem(key, searchTerm);
     }
+
+    useEffect(() => {
+        localStorage.setItem(key, itemFilter);
+    }, [key, itemFilter])
 
     function storiesFiltered() {
         if (itemFilter === noFilter) {
@@ -94,7 +97,7 @@ const Parent = (props) => {
             </section>
             <hr/>
             <aside>
-                =-= items-filter: &ldquo;{itemFilter}&rdquo; =-=
+                =-= {id} filter: &ldquo;{itemFilter}&rdquo; =-=
             </aside>
         </article>
     );

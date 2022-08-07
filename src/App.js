@@ -61,11 +61,11 @@ const App = () => {
                 <h1>Hello {echoFun('react')} world.</h1>
             </header>
 
-            <Parent itemslist={techStuff} id='tech' />
+            <Parent itemslist={techStuff} id='tech'/>
 
             <br/> <br/>
 
-            <Parent itemslist={otherStuff} id='other' />
+            <Parent itemslist={otherStuff} id='other'/>
 
         </main>
     );
@@ -103,7 +103,7 @@ const Parent = (props) => {
     return (
         <>
             <section>
-                <Search searchTerm={itemFilter} updateSearchTerm={handleFilterUpdate} />
+                <LabeledInput label='search' value={itemFilter} onInputChange={handleFilterUpdate}/>
             </section>
             <hr/>
             <section>
@@ -117,25 +117,35 @@ const Parent = (props) => {
     );
 }
 
-const Search = ({searchTerm, updateSearchTerm}) => (
+const LabeledInput = ({label, type = 'text', value, onInputChange}) => (
     <label>
-        search:
-        <input type="text" value={searchTerm} onChange={updateSearchTerm}/>
+        {label}: &nbsp;
+        <input type={type} value={value} onChange={onInputChange}/>
     </label>
 );
 
 
-const List = ({list}) => (
-    <ul>
-        {
-            list.map((item) => (
-                <Item key={item.objectID} item={item} />
-            ))
-        }
-    </ul>
-);
+const List = ({list}) => {
+    if (list.length === 0) {
+        return (
+            <section>
+                <b>-</b>
+            </section>
+        );
+    } else {
+        return (
+            <ul>
+                {
+                    list.map((item) => (
+                        <Item key={item.objectID} item={item}/>
+                    ))
+                }
+            </ul>
+        );
+    }
+}
 
-const Item = ({ item }) => {
+const Item = ({item}) => {
     const {
         url,
         title,

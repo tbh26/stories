@@ -103,7 +103,9 @@ const Parent = (props) => {
     return (
         <>
             <section>
-                <LabeledInput label='search' value={itemFilter} onInputChange={handleFilterUpdate}/>
+                <LabeledInput value={itemFilter} onInputChange={handleFilterUpdate}>
+                    <strong>Search:</strong>
+                </LabeledInput>
             </section>
             <hr/>
             <section>
@@ -117,9 +119,9 @@ const Parent = (props) => {
     );
 }
 
-const LabeledInput = ({label, type = 'text', value, onInputChange}) => (
+const LabeledInput = ({type = 'text', value, onInputChange, children}) => (
     <label>
-        {label}: &nbsp;
+        {children} &nbsp;
         <input type={type} value={value} onChange={onInputChange}/>
     </label>
 );

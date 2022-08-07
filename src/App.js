@@ -40,6 +40,14 @@ const App = () => {
             points: 12,
             objectID: 7,
         },
+        {
+            title: 'Redactie',
+            url: 'https://paper.com/',
+            author: 'Clark Kent',
+            num_comments: 13,
+            points: 7,
+            objectID: 9,
+        },
     ];
 
     function echoFun(mesg) {
@@ -63,20 +71,26 @@ const App = () => {
     );
 }
 
+export function useStoredState(key, initialState) {
+    const [value, setValue] = useState(localStorage.getItem(key) || initialState);
+
+    useEffect(() => {
+        localStorage.setItem(key, value);
+    }, [key, value])
+
+    return [value, setValue];
+}
+
 const Parent = (props) => {
     const items = props.itemslist;
     const id = props.id;
     const key = `${id}.searchTerm`;
-    const [itemFilter, setItemFilter] = useState(localStorage.getItem(key) || noFilter);
+    const [itemFilter, setItemFilter] = useStoredState(key, noFilter);
 
     const handleFilterUpdate = (event) => {
         const searchTerm = event.target.value
         setItemFilter(searchTerm);
     }
-
-    useEffect(() => {
-        localStorage.setItem(key, itemFilter);
-    }, [key, itemFilter])
 
     function storiesFiltered() {
         if (itemFilter === noFilter) {

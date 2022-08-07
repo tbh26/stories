@@ -1,6 +1,5 @@
 import {useState} from "react";
 
-
 export const noFilter = '';
 
 const App = () => {
@@ -69,6 +68,14 @@ const Parent = (props) => {
         setItemFilter(event.target.value)
     }
 
+    function storiesFiltered() {
+        if (itemFilter === noFilter) {
+            return items;
+        } else {
+            return items.filter((story) => story.title.toLowerCase().includes(itemFilter.toLowerCase()));
+        }
+    }
+
     return (
         <article>
             <section>
@@ -76,7 +83,7 @@ const Parent = (props) => {
             </section>
             <hr/>
             <section>
-                <List list={items}/>
+                <List list={storiesFiltered()}/>
             </section>
             <hr/>
             <aside>

@@ -1,3 +1,5 @@
+import {useState} from "react";
+
 const App = () => {
 
     const techStuff = [
@@ -48,16 +50,24 @@ const App = () => {
 }
 
 const Search = () => {
+    const [searchTerm, setSearchTerm] = useState('');
+
     const handleChange = (event) => {
         console.debug('event; ', event);
         console.info(`event.target.value: ${event.target.value} `);
+        setSearchTerm(event.target.value);
     };
 
     return (
-        <label>
-            search:
-            <input type="text" onChange={handleChange}/>
-        </label>
+        <section>
+            <label>
+                search:
+                <input type="text" onChange={handleChange}/>
+            </label>
+            <aside>
+                searching for: {searchTerm}
+            </aside>
+        </section>
     );
 };
 

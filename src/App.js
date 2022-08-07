@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 
 export const noFilter = '';
 
@@ -61,11 +61,11 @@ const App = () => {
                 <h1>Hello {echoFun('react')} world.</h1>
             </header>
 
-            <Parent items={techStuff} id='tech' />
+            <Parent items={techStuff} id='tech' hasFocus/>
 
             <br/> <br/>
 
-            <Parent items={otherStuff} id='other' hasFocus />
+            <Parent items={otherStuff} id='other'/>
 
         </main>
     );
@@ -101,7 +101,7 @@ const Parent = ({items, id, hasFocus = false}) => {
     return (
         <>
             <section>
-                <LabeledInput value={itemFilter} onInputChange={handleFilterUpdate} hasFocus={hasFocus} >
+                <LabeledInput value={itemFilter} onInputChange={handleFilterUpdate} hasFocus={hasFocus}>
                     <strong>Search:</strong>
                 </LabeledInput>
             </section>
@@ -117,12 +117,22 @@ const Parent = ({items, id, hasFocus = false}) => {
     );
 }
 
-const LabeledInput = ({value, onInputChange, type = 'text', hasFocus = false, children}) => (
-    <label>
-        {children} &nbsp;
-        <input value={value} onChange={onInputChange} type={type} autoFocus={hasFocus}/>
-    </label>
-);
+const LabeledInput = ({value, onInputChange, type = 'text', hasFocus = false, children}) => {
+    const inputRef = useRef();
+
+    useEffect(() => {
+        if (hasFocus && inputRef.current) {
+            inputRef.current.focus();
+        }
+    }, [hasFocus]);
+
+    return (
+        <label>
+            {children} &nbsp;
+            <input value={value} onChange={onInputChange} type={type} ref={inputRef}/>
+        </label>
+    );
+}
 
 
 const List = ({list}) => {

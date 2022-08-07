@@ -96,12 +96,15 @@ const Parent = (props) => {
     );
 }
 
-const Search = (props) => (
-    <label>
-        search:
-        <input type="text" value={props.searchTerm} onChange={props.updateSearchTerm}/>
-    </label>
-)
+const Search = (props) => {
+    const {searchTerm, updateSearchTerm} = props;
+    return (
+        <label>
+            search:
+            <input type="text" value={searchTerm} onChange={updateSearchTerm}/>
+        </label>
+    );
+}
 
 
 const List = (props) => (

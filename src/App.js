@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 export const noFilter = '';
 
 export const initialStories = [];
+export const noStories = [];
 
 const techStuff = [
     {
@@ -112,6 +113,7 @@ const Parent = ({id, hasFocus = false}) => {
     const [list, updateList] = useState(initialStories);
     const [itemFilter, setItemFilter] = useStoredState(key, noFilter);
     const [isLoading, setIsLoading] = useState(false);
+    const [loadError, setLoadError] = useState(false);
 
     const handleFilterUpdate = (event) => {
         const searchTerm = event.target.value
@@ -138,21 +140,28 @@ const Parent = ({id, hasFocus = false}) => {
             if (id === 'tech') {
                 stories = techStuff;
             }
-            return new Promise((resolve) => {
-                const timeOut = Math.floor(Math.random() * 4500);
-                return setTimeout(() => {
-                    console.info(`id: ${id}, time-out: ${timeOut}`);
-                    setIsLoading(false);
-                    return resolve({data: {stories}});
-                }, timeOut);
-            });
+            const timeOut = Math.floor(Math.random() * 4500);
+            if (timeOut % 7) {
+                return new Promise((resolve) => {
+                    return setTimeout(() => {
+                        console.info(`resolve, id: ${id}, time-out: ${timeOut}`);
+                        setIsLoading(false);
+                        return resolve({data: {stories}});
+                    }, timeOut);
+                });
+            } else {
+                return new Promise( (reject) => {
+                    return setTimeout(() => {
+                        console.info(`reject, id: ${id}, time-out: ${timeOut}`);
+                        setIsLoading(false);
+                        setLoadError(true);
+                        return reject({data: {stories: []}});
+                    }, timeOut);
+                })
+            }
         };
-        getAsyncStories().then(result => updateList(result.data.stories));
+        getAsyncStories().then(result => updateList(result.data.stories)).catch(() => setLoadError(true));
     }, [id]);
-
-    if (isLoading) {
-        return <section>Loading ...</section>
-    }
 
     return (
         <>
@@ -162,9 +171,14 @@ const Parent = ({id, hasFocus = false}) => {
                 </LabeledInput>
             </section>
             <hr/>
-            <section>
-                <List list={storiesFiltered()} deleteItem={removeItem}/>
-            </section>
+            {
+                loadError ? (<section>error on loading</section>) :
+                isLoading ? (<section>Loading ...</section>) : (
+                    <section>
+                        <List list={storiesFiltered()} deleteItem={removeItem}/>
+                    </section>
+                )
+            }
             <hr/>
             <aside>
                 =-= {id} filter: &ldquo;{itemFilter}&rdquo; =-=

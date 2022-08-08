@@ -171,8 +171,8 @@ const Parent = ({id, hasFocus = false}) => {
                 </LabeledInput>
             </section>
             <hr/>
+            {loadError && <section>error loading</section>}
             {
-                loadError ? (<section>error on loading</section>) :
                 isLoading ? (<section>Loading ...</section>) : (
                     <section>
                         <List list={storiesFiltered()} deleteItem={removeItem}/>

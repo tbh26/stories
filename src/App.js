@@ -1,78 +1,80 @@
-import {useEffect, useRef, useState} from "react";
+import { useEffect, useRef, useState } from "react";
 
 export const noFilter = '';
 
+export const initialStories = [];
+
+const techStuff = [
+    {
+        title: 'React',
+        url: 'https://reactjs.org/',
+        author: 'Jordan Walke II',
+        num_comments: 3,
+        points: 4,
+        objectID: 0,
+    },
+    {
+        title: 'Road to React',
+        url: 'https://www.roadtoreact.com/',
+        author: 'Robin Wieruch',
+        num_comments: 3,
+        points: 9,
+        objectID: 13,
+    },
+    {
+        title: 'Redux',
+        url: 'https://redux.js.org/',
+        author: 'Dan Abramov, Andrew Clark',
+        num_comments: 2,
+        points: 5,
+        objectID: 1,
+    },
+    {
+        title: 'Road to GraphQL',
+        url: 'https://www.roadtographql.com/',
+        author: 'Robin Wieruch',
+        num_comments: 2,
+        points: 8,
+        objectID: 14,
+    },
+];
+
+const otherStuff = [
+    {
+        title: 'Reactie',
+        url: 'https://example.org/',
+        author: 'Jojo',
+        num_comments: 7,
+        points: 1,
+        objectID: 35,
+    },
+    {
+        title: 'Rebus',
+        url: 'https://puzzle.net/',
+        author: 'Pipo',
+        num_comments: 0,
+        points: 5,
+        objectID: 36,
+    },
+    {
+        title: 'Reductie',
+        url: 'https://sale.org/',
+        author: 'ac / dc',
+        num_comments: 3,
+        points: 3,
+        objectID: 37,
+    },
+    {
+        title: 'Redactie',
+        url: 'https://paper.com/',
+        author: 'Clark Kent',
+        num_comments: 13,
+        points: 7,
+        objectID: 39,
+    },
+];
+
 const App = () => {
-
-    const techStuff = [
-        {
-            title: 'React',
-            url: 'https://reactjs.org/',
-            author: 'Jordan Walke II',
-            num_comments: 3,
-            points: 4,
-            objectID: 0,
-        },
-        {
-            title: 'Road to React',
-            url: 'https://www.roadtoreact.com/',
-            author: 'Robin Wieruch',
-            num_comments: 3,
-            points: 9,
-            objectID: 13,
-        },
-        {
-            title: 'Redux',
-            url: 'https://redux.js.org/',
-            author: 'Dan Abramov, Andrew Clark',
-            num_comments: 2,
-            points: 5,
-            objectID: 1,
-        },
-        {
-            title: 'Road to GraphQL',
-            url: 'https://www.roadtographql.com/',
-            author: 'Robin Wieruch',
-            num_comments: 2,
-            points: 8,
-            objectID: 14,
-        },
-    ];
-
-    const otherStuff = [
-        {
-            title: 'Reactie',
-            url: 'https://example.org/',
-            author: 'Jojo',
-            num_comments: 7,
-            points: 1,
-            objectID: 35,
-        },
-        {
-            title: 'Rebus',
-            url: 'https://puzzle.net/',
-            author: 'Pipo',
-            num_comments: 0,
-            points: 5,
-            objectID: 36,
-        },
-        {
-            title: 'Reductie',
-            url: 'https://sale.org/',
-            author: 'ac / dc',
-            num_comments: 3,
-            points: 3,
-            objectID: 37,
-        },
-        {
-            title: 'Redactie',
-            url: 'https://paper.com/',
-            author: 'Clark Kent',
-            num_comments: 13,
-            points: 7,
-            objectID: 39,
-        },
-    ];
 
     function echoFun(mesg) {
         return mesg;
@@ -85,11 +87,11 @@ const App = () => {
                 <h1>Hello {echoFun('react')} world.</h1>
             </header>
 
-            <Parent items={techStuff} id='tech'/>
+            <Parent id='tech'/>
 
             <br/> <br/>
 
-            <Parent items={otherStuff} id='other' hasFocus/>
+            <Parent id='other' hasFocus/>
 
         </main>
     );
@@ -105,9 +107,9 @@ export function useStoredState(key, initialState) {
     return [value, setValue];
 }
 
-const Parent = ({items, id, hasFocus = false}) => {
+const Parent = ({id, hasFocus = false}) => {
     const key = `${id}.searchTerm`;
-    const [list, updateList] = useState(items);
+    const [list, updateList] = useState(initialStories);
     const [itemFilter, setItemFilter] = useStoredState(key, noFilter);
 
     const handleFilterUpdate = (event) => {
@@ -127,6 +129,21 @@ const Parent = ({items, id, hasFocus = false}) => {
         const newList = list.filter((item) => (item.objectID !== id));
         updateList(newList);
     }
+
+    useEffect(() => {
+        const getAsyncStories = () => {
+            let stories = otherStuff;
+            if (id === 'tech') {
+                stories = techStuff;
+            }
+            return new Promise((resolve) => {
+                const timeOut = Math.floor(Math.random() * 2500);
+                console.info(`id: ${id}, time-out: ${timeOut}`);
+                return setTimeout(() => resolve({data: {stories}}), timeOut);
+            });
+        };
+        getAsyncStories().then(result => updateList(result.data.stories));
+    }, [id]);
 
     return (
         <>

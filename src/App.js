@@ -111,6 +111,7 @@ const Parent = ({id, hasFocus = false}) => {
     const key = `${id}.searchTerm`;
     const [list, updateList] = useState(initialStories);
     const [itemFilter, setItemFilter] = useStoredState(key, noFilter);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleFilterUpdate = (event) => {
         const searchTerm = event.target.value
@@ -131,19 +132,27 @@ const Parent = ({id, hasFocus = false}) => {
     }
 
     useEffect(() => {
+        setIsLoading(true);
         const getAsyncStories = () => {
             let stories = otherStuff;
             if (id === 'tech') {
                 stories = techStuff;
             }
             return new Promise((resolve) => {
-                const timeOut = Math.floor(Math.random() * 2500);
-                console.info(`id: ${id}, time-out: ${timeOut}`);
-                return setTimeout(() => resolve({data: {stories}}), timeOut);
+                const timeOut = Math.floor(Math.random() * 4500);
+                return setTimeout(() => {
+                    console.info(`id: ${id}, time-out: ${timeOut}`);
+                    setIsLoading(false);
+                    return resolve({data: {stories}});
+                }, timeOut);
             });
         };
         getAsyncStories().then(result => updateList(result.data.stories));
     }, [id]);
+
+    if (isLoading) {
+        return <section>Loading ...</section>
+    }
 
     return (
         <>

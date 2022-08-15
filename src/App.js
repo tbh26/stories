@@ -1,9 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 
 export const noFilter = '';
 
 export const initialStories = [];
 export const noStories = [];
+export const setStories = 'SET_STORIES';
+export const removeStory = 'REMOVE_STORY';
 
 const techStuff = [
     {
@@ -108,9 +110,25 @@ export function useStoredState(key, initialState) {
     return [value, setValue];
 }
 
+const storiesReducer = (state, action) => {
+    console.debug('storiesReducer, action: ', action);
+    switch (action.type) {
+        case setStories:
+            return action.payload;
+        case removeStory:
+            return state.filter(
+                (story) => action.payload.objectId !== story.objectID
+            );
+        default:
+            // throw new Error(`storiesReducer, unknown action type: ${action.type}`);
+            console.error(`storiesReducer, unknown action type: ${action.type}`);
+            return state;
+    }
+}
+
 const Parent = ({id, hasFocus = false}) => {
     const key = `${id}.searchTerm`;
-    const [list, updateList] = useState(initialStories);
+    const [stories, dispatchStories] = useReducer(storiesReducer, initialStories);
     const [itemFilter, setItemFilter] = useStoredState(key, noFilter);
     const [isLoading, setIsLoading] = useState(false);
     const [loadError, setLoadError] = useState(false);
@@ -120,17 +138,17 @@ const Parent = ({id, hasFocus = false}) => {
         setItemFilter(searchTerm);
     }
 
-    function storiesFiltered() {
+    function getStories() {
         if (itemFilter === noFilter) {
-            return list;
+            return stories;
         } else {
-            return list.filter((story) => story.title.toLowerCase().includes(itemFilter.toLowerCase()));
+            return stories.filter((story) => story.title.toLowerCase().includes(itemFilter.toLowerCase()));
         }
     }
 
     const removeItem = (id) => {
-        const newList = list.filter((item) => (item.objectID !== id));
-        updateList(newList);
+        // dispatchStories({type: 'noAction', payload: { objectId: -1} });
+        dispatchStories({type: removeStory, payload: {objectId: id}});
     }
 
     useEffect(() => {
@@ -150,7 +168,7 @@ const Parent = ({id, hasFocus = false}) => {
                     }, timeOut);
                 });
             } else {
-                return new Promise( (reject) => {
+                return new Promise((reject) => {
                     return setTimeout(() => {
                         console.info(`reject, id: ${id}, time-out: ${timeOut}`);
                         setIsLoading(false);
@@ -160,7 +178,10 @@ const Parent = ({id, hasFocus = false}) => {
                 })
             }
         };
-        getAsyncStories().then(result => updateList(result.data.stories)).catch(() => setLoadError(true));
+        getAsyncStories().then(result => dispatchStories({
+            type: setStories,
+            payload: result.data.stories
+        })).catch(() => setLoadError(true));
     }, [id]);
 
     return (
@@ -175,7 +196,7 @@ const Parent = ({id, hasFocus = false}) => {
             {
                 isLoading ? (<section>Loading ...</section>) : (
                     <section>
-                        <List list={storiesFiltered()} deleteItem={removeItem}/>
+                        <List list={getStories()} deleteItem={removeItem}/>
                     </section>
                 )
             }

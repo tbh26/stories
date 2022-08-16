@@ -10,75 +10,7 @@ export const initialStoriesState = {data: noStories, isLoading: false, loadError
 export const fetchStoriesState = {data: noStories, isLoading: true, loadError: false};
 export const storiesErrorState = {data: noStories, isLoading: false, loadError: true};
 
-const techStuff = [
-    {
-        title: 'React',
-        url: 'https://reactjs.org/',
-        author: 'Jordan Walke II',
-        num_comments: 3,
-        points: 4,
-        objectID: 0,
-    },
-    {
-        title: 'Road to React',
-        url: 'https://www.roadtoreact.com/',
-        author: 'Robin Wieruch',
-        num_comments: 3,
-        points: 9,
-        objectID: 13,
-    },
-    {
-        title: 'Redux',
-        url: 'https://redux.js.org/',
-        author: 'Dan Abramov, Andrew Clark',
-        num_comments: 2,
-        points: 5,
-        objectID: 1,
-    },
-    {
-        title: 'Road to GraphQL',
-        url: 'https://www.roadtographql.com/',
-        author: 'Robin Wieruch',
-        num_comments: 2,
-        points: 8,
-        objectID: 14,
-    },
-];
-
-const otherStuff = [
-    {
-        title: 'Reactie',
-        url: 'https://example.org/',
-        author: 'Jojo',
-        num_comments: 7,
-        points: 1,
-        objectID: 35,
-    },
-    {
-        title: 'Rebus',
-        url: 'https://puzzle.net/',
-        author: 'Pipo',
-        num_comments: 0,
-        points: 5,
-        objectID: 36,
-    },
-    {
-        title: 'Reductie',
-        url: 'https://sale.org/',
-        author: 'ac / dc',
-        num_comments: 3,
-        points: 3,
-        objectID: 37,
-    },
-    {
-        title: 'Redactie',
-        url: 'https://paper.com/',
-        author: 'Clark Kent',
-        num_comments: 13,
-        points: 7,
-        objectID: 39,
-    },
-];
+const hnBaseApi = 'https://hn.algolia.com/api/v1';
 
 const App = () => {
 
@@ -97,7 +29,7 @@ const App = () => {
 
             <br/> <br/>
 
-            <Parent id='other' hasFocus/>
+            <Parent id='react' hasFocus/>
 
         </main>
     );
@@ -121,7 +53,7 @@ const storiesReducer = (state, action) => {
             console.debug('(sr) fetch stories...');
             return fetchStoriesState;
         case processSuccess:
-            newState = {data: action.payload.stories, isLoading: false, loadError: false};
+            newState = {data: action.payload.data, isLoading: false, loadError: false};
             console.debug('(sr) process success result; newstate:', newState);
             return newState;
         case processFail:
@@ -166,38 +98,16 @@ const Parent = ({id, hasFocus = false}) => {
 
     useEffect(() => {
         dispatchStories({type: fetchStories, payload: fetchStoriesState});
-        const getAsyncStories = () => {
-            let stories = otherStuff;
-            if (id === 'tech') {
-                stories = techStuff;
-            }
-            const timeOut = Math.floor(Math.random() * 4500);
-            if (timeOut % 7) {
-                return new Promise((resolve) => {
-                    return setTimeout(() => {
-                        console.info(`resolve, id: ${id}, time-out: ${timeOut}`);
-                        return resolve({data: {stories, isLoading: false, loadError: false}});
-                    }, timeOut);
-                });
-            } else {
-                return new Promise((reject) => {
-                    return setTimeout(() => {
-                        console.error(`reject, id: ${id}, time-out: ${timeOut}`);
-                        return reject(storiesErrorState);
-                    }, timeOut);
-                })
-            }
-        };
-        getAsyncStories()
-            .then(result => {
-                console.debug('promise result: ', result);
-                if (result && result.loadError) {
-                    return dispatchStories({type: processFail, payload: result.data});
-                } else {
-                    return dispatchStories({type: processSuccess, payload: result.data});
-                }
+        const hnUrl = `${hnBaseApi}/search?query=${id}`;
+        const newStoriesState = {...initialStoriesState};
+        fetch(hnUrl)
+            .then( (response) => response.json())
+            .then( (result) => {
+                console.info(`hn api ${id} result:`, result);
+                newStoriesState.data = result.hits;
+                dispatchStories({type: processSuccess, payload: newStoriesState });
             })
-            .catch(() => dispatchStories({type: processFail, payload: storiesErrorState}));
+            .catch(() => dispatchStories({type : processFail, payload: storiesErrorState}));
     }, [id]);
 
     return (

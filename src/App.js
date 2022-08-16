@@ -1,6 +1,7 @@
 import { useEffect, useReducer, useRef, useState } from "react";
 
 export const noFilter = '';
+export const noSearch = '';
 export const fetchStories = 'OUTSET_FETCH_STORIES';
 export const processSuccess = 'PROCESS_FETCH_SUCCESS';
 export const processFail = 'PROCESS_FETCH_FAILURE';
@@ -25,11 +26,11 @@ const App = () => {
                 <h1>Hello {echoFun('react')} world.</h1>
             </header>
 
-            <Parent id='tech'/>
+            <Parent id='first'/>
 
             <br/> <br/>
 
-            <Parent id='react' hasFocus/>
+            <Parent id='next' hasFocus/>
 
         </main>
     );
@@ -76,19 +77,24 @@ const Parent = ({id, hasFocus = false}) => {
     const key = `${id}.searchTerm`;
     const [stories, dispatchStories] = useReducer(storiesReducer, initialStoriesState);
     const [itemFilter, setItemFilter] = useStoredState(key, noFilter);
+    const [searchTerm, setSearchTerm] = useState(itemFilter);
 
     const handleFilterUpdate = (event) => {
-        const searchTerm = event.target.value
+        const searchTerm = event.target.value;
+        console.debug('keyChange event: ', event);
         setItemFilter(searchTerm);
     }
 
-    function getStories() {
-        console.debug(`getStories, itemFilter: ${itemFilter}, stories:`, stories);
-        if (itemFilter === noFilter) {
-            return stories.data;
-        } else {
-            return stories.data.filter((story) => story.title.toLowerCase().includes(itemFilter.toLowerCase()));
+    const handleKeyUpdate = (event) => {
+        console.debug('KeyUpdate, event: ', event);
+        if (event && event.code && event.code === "Enter") {
+            console.debug("enter: ", itemFilter);
+            setSearchTerm(itemFilter);
         }
+    }
+
+    function getStories() {
+        return stories.data;
     }
 
     const removeItem = (id) => {
@@ -98,7 +104,10 @@ const Parent = ({id, hasFocus = false}) => {
 
     useEffect(() => {
         dispatchStories({type: fetchStories, payload: fetchStoriesState});
-        const hnUrl = `${hnBaseApi}/search?query=${id}`;
+        let hnUrl = `${hnBaseApi}/search`;
+        if (searchTerm !== noSearch) {
+            hnUrl = `${hnBaseApi}/search?query=${searchTerm}`;
+        }
         const newStoriesState = {...initialStoriesState};
         fetch(hnUrl)
             .then( (response) => response.json())
@@ -108,12 +117,12 @@ const Parent = ({id, hasFocus = false}) => {
                 dispatchStories({type: processSuccess, payload: newStoriesState });
             })
             .catch(() => dispatchStories({type : processFail, payload: storiesErrorState}));
-    }, [id]);
+    }, [searchTerm]);
 
     return (
         <>
             <section>
-                <LabeledInput value={itemFilter} onInputChange={handleFilterUpdate} hasFocus={hasFocus}>
+                <LabeledInput value={itemFilter} onInputChange={handleFilterUpdate} onKeyup={handleKeyUpdate} hasFocus={hasFocus}>
                     <strong>Search:</strong>
                 </LabeledInput>
             </section>
@@ -134,7 +143,7 @@ const Parent = ({id, hasFocus = false}) => {
     );
 }
 
-const LabeledInput = ({value, onInputChange, type = 'text', hasFocus = false, children}) => {
+const LabeledInput = ({value, onInputChange, onKeyup, type = 'text', hasFocus = false, children}) => {
     const inputRef = useRef();
 
     useEffect(() => {
@@ -146,7 +155,7 @@ const LabeledInput = ({value, onInputChange, type = 'text', hasFocus = false, ch
     return (
         <label>
             {children} &nbsp;
-            <input value={value} onChange={onInputChange} type={type} ref={inputRef}/>
+            <input value={value} onChange={onInputChange} onKeyUp={onKeyup} type={type} ref={inputRef}/>
         </label>
     );
 }

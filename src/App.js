@@ -1,11 +1,14 @@
 import { useEffect, useReducer, useRef, useState } from "react";
 
 export const noFilter = '';
-
-export const initialStories = [];
-export const noStories = [];
-export const setStories = 'SET_STORIES';
+export const fetchStories = 'OUTSET_FETCH_STORIES';
+export const processSuccess = 'PROCESS_FETCH_SUCCESS';
+export const processFail = 'PROCESS_FETCH_FAILURE';
 export const removeStory = 'REMOVE_STORY';
+export const noStories = [];
+export const initialStoriesState = {data: noStories, isLoading: false, loadError: false};
+export const fetchStoriesState = {data: noStories, isLoading: true, loadError: false};
+export const storiesErrorState = {data: noStories, isLoading: false, loadError: true};
 
 const techStuff = [
     {
@@ -112,15 +115,26 @@ export function useStoredState(key, initialState) {
 
 const storiesReducer = (state, action) => {
     console.debug('storiesReducer, action: ', action);
+    let newState = {...state};
     switch (action.type) {
-        case setStories:
-            return action.payload;
+        case fetchStories:
+            console.debug('(sr) fetch stories...');
+            return fetchStoriesState;
+        case processSuccess:
+            newState = {data: action.payload.stories, isLoading: false, loadError: false};
+            console.debug('(sr) process success result; newstate:', newState);
+            return newState;
+        case processFail:
+            newState = storiesErrorState;
+            console.debug('(sr) process failure; newstate:', newState);
+            return newState;
         case removeStory:
-            return state.filter(
+            newState.data = state.data.filter(
                 (story) => action.payload.objectId !== story.objectID
             );
+            console.debug('(sr) remove story; newState:', newState);
+            return newState;
         default:
-            // throw new Error(`storiesReducer, unknown action type: ${action.type}`);
             console.error(`storiesReducer, unknown action type: ${action.type}`);
             return state;
     }
@@ -128,10 +142,8 @@ const storiesReducer = (state, action) => {
 
 const Parent = ({id, hasFocus = false}) => {
     const key = `${id}.searchTerm`;
-    const [stories, dispatchStories] = useReducer(storiesReducer, initialStories);
+    const [stories, dispatchStories] = useReducer(storiesReducer, initialStoriesState);
     const [itemFilter, setItemFilter] = useStoredState(key, noFilter);
-    const [isLoading, setIsLoading] = useState(false);
-    const [loadError, setLoadError] = useState(false);
 
     const handleFilterUpdate = (event) => {
         const searchTerm = event.target.value
@@ -139,20 +151,21 @@ const Parent = ({id, hasFocus = false}) => {
     }
 
     function getStories() {
+        console.debug(`getStories, itemFilter: ${itemFilter}, stories:`, stories);
         if (itemFilter === noFilter) {
-            return stories;
+            return stories.data;
         } else {
-            return stories.filter((story) => story.title.toLowerCase().includes(itemFilter.toLowerCase()));
+            return stories.data.filter((story) => story.title.toLowerCase().includes(itemFilter.toLowerCase()));
         }
     }
 
     const removeItem = (id) => {
-        // dispatchStories({type: 'noAction', payload: { objectId: -1} });
+        console.debug(`remove story with id: ${id}.`);
         dispatchStories({type: removeStory, payload: {objectId: id}});
     }
 
     useEffect(() => {
-        setIsLoading(true);
+        dispatchStories({type: fetchStories, payload: fetchStoriesState});
         const getAsyncStories = () => {
             let stories = otherStuff;
             if (id === 'tech') {
@@ -163,25 +176,28 @@ const Parent = ({id, hasFocus = false}) => {
                 return new Promise((resolve) => {
                     return setTimeout(() => {
                         console.info(`resolve, id: ${id}, time-out: ${timeOut}`);
-                        setIsLoading(false);
-                        return resolve({data: {stories}});
+                        return resolve({data: {stories, isLoading: false, loadError: false}});
                     }, timeOut);
                 });
             } else {
                 return new Promise((reject) => {
                     return setTimeout(() => {
-                        console.info(`reject, id: ${id}, time-out: ${timeOut}`);
-                        setIsLoading(false);
-                        setLoadError(true);
-                        return reject({data: {stories: []}});
+                        console.error(`reject, id: ${id}, time-out: ${timeOut}`);
+                        return reject(storiesErrorState);
                     }, timeOut);
                 })
             }
         };
-        getAsyncStories().then(result => dispatchStories({
-            type: setStories,
-            payload: result.data.stories
-        })).catch(() => setLoadError(true));
+        getAsyncStories()
+            .then(result => {
+                console.debug('promise result: ', result);
+                if (result && result.loadError) {
+                    return dispatchStories({type: processFail, payload: result.data});
+                } else {
+                    return dispatchStories({type: processSuccess, payload: result.data});
+                }
+            })
+            .catch(() => dispatchStories({type: processFail, payload: storiesErrorState}));
     }, [id]);
 
     return (
@@ -192,13 +208,13 @@ const Parent = ({id, hasFocus = false}) => {
                 </LabeledInput>
             </section>
             <hr/>
-            {loadError && <section>error loading</section>}
             {
-                isLoading ? (<section>Loading ...</section>) : (
-                    <section>
-                        <List list={getStories()} deleteItem={removeItem}/>
-                    </section>
-                )
+                stories.loadError ? (<section>error on loading</section>) :
+                    stories.isLoading ? (<section>Loading ...</section>) : (
+                        <section>
+                            <List list={getStories()} deleteItem={removeItem}/>
+                        </section>
+                    )
             }
             <hr/>
             <aside>
@@ -227,13 +243,7 @@ const LabeledInput = ({value, onInputChange, type = 'text', hasFocus = false, ch
 
 
 const List = ({list, deleteItem}) => {
-    if (list.length === 0) {
-        return (
-            <section>
-                <b>-</b>
-            </section>
-        );
-    } else {
+    if (list && list.length && list.length !== 0) {
         return (
             <ul>
                 {
@@ -242,6 +252,12 @@ const List = ({list, deleteItem}) => {
                     ))
                 }
             </ul>
+        );
+    } else {
+        return (
+            <section>
+                <b>-</b>
+            </section>
         );
     }
 }

@@ -93,20 +93,21 @@ const Parent = ({id, hasFocus = false}) => {
         dispatchStories({type: removeStory, payload: {objectId: id}});
     }
 
-    const handleFetchStories = useCallback(() => {
+    const handleFetchStories = useCallback(async () => {
         dispatchStories({type: fetchStories, payload: fetchStoriesState});
         let hnUrl = `${hnBaseApi}/search`;
         if (inputItem !== noItem) {
             hnUrl = `${hnBaseApi}/search?query=${inputItem}`;
         }
-        const newStoriesState = {...initialStoriesState};
-        axios.get(hnUrl)
-            .then((result) => {
-                console.info(`hn api ${id} result:`, result);
-                newStoriesState.data = result.data.hits;
-                dispatchStories({type: processSuccess, payload: newStoriesState});
-            })
-            .catch(() => dispatchStories({type: processFail, payload: storiesErrorState}));
+        try {
+            const newStoriesState = {...initialStoriesState};
+            const result = await axios.get(hnUrl);
+            console.info(`hn api ${id} result:`, result);
+            newStoriesState.data = result.data.hits;
+            dispatchStories({type: processSuccess, payload: newStoriesState});
+        } catch {
+            dispatchStories({type: processFail, payload: storiesErrorState});
+        }
     }, [inputItem, id]);
 
     const handleSearchSubmit = () => {

@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 
-export const noFilter = '';
-export const noSearch = '';
+export const noItem = '';
 export const fetchStories = 'OUTSET_FETCH_STORIES';
 export const processSuccess = 'PROCESS_FETCH_SUCCESS';
 export const processFail = 'PROCESS_FETCH_FAILURE';
@@ -27,10 +26,10 @@ const App = () => {
             </header>
 
             <Parent id='first'/>
-
-            <br/> <br/>
-
+            <br/>
             <Parent id='next' hasFocus/>
+            <br/>
+            <Parent id='last'/>
 
         </main>
     );
@@ -76,21 +75,12 @@ const storiesReducer = (state, action) => {
 const Parent = ({id, hasFocus = false}) => {
     const key = `${id}.searchTerm`;
     const [stories, dispatchStories] = useReducer(storiesReducer, initialStoriesState);
-    const [itemFilter, setItemFilter] = useStoredState(key, noFilter);
-    const [searchTerm, setSearchTerm] = useState(itemFilter);
+    const [inputItem, setInputItem] = useStoredState(key, noItem);
 
     const handleFilterUpdate = (event) => {
         const searchTerm = event.target.value;
         console.debug('keyChange event: ', event);
-        setItemFilter(searchTerm);
-    }
-
-    const handleKeyUpdate = (event) => {
-        console.debug('KeyUpdate, event: ', event);
-        if (event && event.code && event.code === "Enter") {
-            console.debug("enter: ", itemFilter);
-            setSearchTerm(itemFilter);
-        }
+        setInputItem(searchTerm);
     }
 
     function getStories() {
@@ -105,8 +95,8 @@ const Parent = ({id, hasFocus = false}) => {
     const handleFetchStories = useCallback(() => {
         dispatchStories({type: fetchStories, payload: fetchStoriesState});
         let hnUrl = `${hnBaseApi}/search`;
-        if (searchTerm !== noSearch) {
-            hnUrl = `${hnBaseApi}/search?query=${searchTerm}`;
+        if (inputItem !== noItem) {
+            hnUrl = `${hnBaseApi}/search?query=${inputItem}`;
         }
         const newStoriesState = {...initialStoriesState};
         fetch(hnUrl)
@@ -117,21 +107,21 @@ const Parent = ({id, hasFocus = false}) => {
                 dispatchStories({type: processSuccess, payload: newStoriesState});
             })
             .catch(() => dispatchStories({type: processFail, payload: storiesErrorState}));
-    }, [searchTerm, id]);
+    }, [inputItem, id]);
 
-    useEffect(() => {
+    const handleSearchSubmit = () => {
         handleFetchStories();
-    }, [handleFetchStories]);
-
+    }
     return (
         <>
+            <hr/>
             <section>
-                <LabeledInput value={itemFilter} onInputChange={handleFilterUpdate} onKeyup={handleKeyUpdate}
-                              hasFocus={hasFocus}>
+                <LabeledInput value={inputItem} onInputChange={handleFilterUpdate} hasFocus={hasFocus}>
                     <strong>Search:</strong>
                 </LabeledInput>
             </section>
-            <hr/>
+            <button type='button' onClick={handleSearchSubmit}>search</button>
+            <br/>
             {
                 stories.loadError ? (<section>error on loading</section>) :
                     stories.isLoading ? (<section>Loading ...</section>) : (
@@ -140,15 +130,16 @@ const Parent = ({id, hasFocus = false}) => {
                         </section>
                     )
             }
-            <hr/>
+            <br/>
             <aside>
-                =-= {id} filter: &ldquo;{itemFilter}&rdquo; =-=
+                == {id} filter: &ldquo;{inputItem}&rdquo; ==
             </aside>
+            <hr/>
         </>
     );
 }
 
-const LabeledInput = ({value, onInputChange, onKeyup, type = 'text', hasFocus = false, children}) => {
+const LabeledInput = ({value, onInputChange, type = 'text', hasFocus = false, children}) => {
     const inputRef = useRef();
 
     useEffect(() => {
@@ -160,7 +151,7 @@ const LabeledInput = ({value, onInputChange, onKeyup, type = 'text', hasFocus = 
     return (
         <label>
             {children} &nbsp;
-            <input value={value} onChange={onInputChange} onKeyUp={onKeyup} type={type} ref={inputRef}/>
+            <input value={value} onChange={onInputChange} type={type} ref={inputRef}/>
         </label>
     );
 }

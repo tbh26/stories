@@ -140,11 +140,10 @@ const Parent = ({id, hasFocus = false}) => {
 }
 
 const SearchForm = ({inputItem, filterUpdate, searchSubmit, hasFocus}) => (
-    <form onSubmit={searchSubmit}>
+    <form onSubmit={searchSubmit} className='search-form'>
         <LabeledInput value={inputItem} onInputChange={filterUpdate} hasFocus={hasFocus}>
-            <strong>Search:</strong>
+            <strong>Search for </strong>
         </LabeledInput>
-        <span> </span>
         <button className='button' type='submit'>search</button>
     </form>
 );
@@ -198,15 +197,15 @@ const Item = ({item, purgeItem}) => {
     } = item;
     return (
         <li className='item'>
-            <span style={{width: '40%'}} >
+            <span style={{width: '40%'}}>
                 <a href={url}>{title}</a>
             </span>
-            <span style={{width: '10%'}} >author: </span>
-            <span style={{width: '15%'}} >{author}</span>
-            <span style={{width: '10%'}} ># comments: </span>
-            <span style={{width: '5%'}} >{num_comments}</span>
-            <span style={{width: '10%'}} >points: </span>
-            <span style={{width: '5%'}} >{points} &nbsp; </span>
+            <span style={{width: '10%'}}>author: </span>
+            <span style={{width: '15%'}}>{author}</span>
+            <span style={{width: '10%'}}># comments: </span>
+            <span style={{width: '5%'}}>{num_comments}</span>
+            <span style={{width: '10%'}}>points: </span>
+            <span style={{width: '5%'}}>{points} &nbsp; </span>
             <button style={{width: '5%'}} className='button' type='button' onClick={() => {
                 purgeItem(objectID)
             }}><strong>X</strong></button>

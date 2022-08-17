@@ -170,7 +170,7 @@ const LabeledInput = ({value, onInputChange, type = 'text', hasFocus = false, ch
 const List = ({list, deleteItem}) => {
     if (list && list.length && list.length !== 0) {
         return (
-            <ul>
+            <ul style={{paddingLeft: 0}}>
                 {
                     list.map((item) => (
                         <Item key={item.objectID} item={item} purgeItem={deleteItem}/>

@@ -110,18 +110,16 @@ const Parent = ({id, hasFocus = false}) => {
         }
     }, [inputItem, id]);
 
-    const handleSearchSubmit = () => {
+    const handleSearchSubmit = (e) => {
+        e.preventDefault();
         handleFetchStories();
     }
+
     return (
         <>
             <hr/>
-            <section>
-                <LabeledInput value={inputItem} onInputChange={handleFilterUpdate} hasFocus={hasFocus}>
-                    <strong>Search:</strong>
-                </LabeledInput>
-            </section>
-            <button type='button' onClick={handleSearchSubmit}>search</button>
+            <SearchForm inputItem={inputItem} filterUpdate={handleFilterUpdate} searchSubmit={handleSearchSubmit}
+                        hasFocus={hasFocus}/>
             <br/>
             {
                 stories.loadError ? (<section>error on loading</section>) :
@@ -139,6 +137,17 @@ const Parent = ({id, hasFocus = false}) => {
         </>
     );
 }
+
+const SearchForm = ({inputItem, filterUpdate, searchSubmit, hasFocus}) => (
+    <form onSubmit={searchSubmit}>
+        <LabeledInput value={inputItem} onInputChange={filterUpdate} hasFocus={hasFocus}>
+            <strong>Search:</strong>
+        </LabeledInput>
+        <span> </span>
+        <button type='submit'>search</button>
+    </form>
+);
+
 
 const LabeledInput = ({value, onInputChange, type = 'text', hasFocus = false, children}) => {
     const inputRef = useRef();

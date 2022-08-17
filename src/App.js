@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import axios from "axios";
+import './App.css';
 
 export const noItem = '';
 export const fetchStories = 'OUTSET_FETCH_STORIES';
@@ -20,7 +21,7 @@ const App = () => {
     }
 
     return (
-        <main>
+        <main className='container'>
 
             <header>
                 <h1>Hello {echoFun('react')} world.</h1>

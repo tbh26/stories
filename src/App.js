@@ -197,17 +197,17 @@ const Item = ({item, purgeItem}) => {
         objectID
     } = item;
     return (
-        <li>
-            <span>
+        <li className='item'>
+            <span style={{width: '40%'}} >
                 <a href={url}>{title}</a>
             </span>
-            <span>, author: </span>
-            <span>{author}</span>
-            <span>, # comments: </span>
-            <span>{num_comments}</span>
-            <span>, points: </span>
-            <span>{points} &nbsp; </span>
-            <button type='button' onClick={() => {
+            <span style={{width: '10%'}} >author: </span>
+            <span style={{width: '15%'}} >{author}</span>
+            <span style={{width: '10%'}} ># comments: </span>
+            <span style={{width: '5%'}} >{num_comments}</span>
+            <span style={{width: '10%'}} >points: </span>
+            <span style={{width: '5%'}} >{points} &nbsp; </span>
+            <button style={{width: '5%'}} type='button' onClick={() => {
                 purgeItem(objectID)
             }}><strong>X</strong></button>
         </li>

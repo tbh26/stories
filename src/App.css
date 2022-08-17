@@ -11,3 +11,23 @@
   font-weight: 400;
   letter-spacing: 2px;
 }
+
+.item {
+  margin: 4px;
+  padding: 8px;
+  border-radius: 4px;
+  background: #ddd;
+  list-style-type: none;
+  display: flex;
+  align-items: center;
+}
+
+.item > span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item > span > a {
+  color: inherit;
+}

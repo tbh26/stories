@@ -145,7 +145,7 @@ const SearchForm = ({inputItem, filterUpdate, searchSubmit, hasFocus}) => (
             <strong>Search:</strong>
         </LabeledInput>
         <span> </span>
-        <button type='submit'>search</button>
+        <button className='button' type='submit'>search</button>
     </form>
 );
 
@@ -207,7 +207,7 @@ const Item = ({item, purgeItem}) => {
             <span style={{width: '5%'}} >{num_comments}</span>
             <span style={{width: '10%'}} >points: </span>
             <span style={{width: '5%'}} >{points} &nbsp; </span>
-            <button style={{width: '5%'}} type='button' onClick={() => {
+            <button style={{width: '5%'}} className='button' type='button' onClick={() => {
                 purgeItem(objectID)
             }}><strong>X</strong></button>
         </li>

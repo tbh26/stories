@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
+import axios from "axios";
 
 export const noItem = '';
 export const fetchStories = 'OUTSET_FETCH_STORIES';
@@ -99,11 +100,10 @@ const Parent = ({id, hasFocus = false}) => {
             hnUrl = `${hnBaseApi}/search?query=${inputItem}`;
         }
         const newStoriesState = {...initialStoriesState};
-        fetch(hnUrl)
-            .then((response) => response.json())
+        axios.get(hnUrl)
             .then((result) => {
                 console.info(`hn api ${id} result:`, result);
-                newStoriesState.data = result.hits;
+                newStoriesState.data = result.data.hits;
                 dispatchStories({type: processSuccess, payload: newStoriesState});
             })
             .catch(() => dispatchStories({type: processFail, payload: storiesErrorState}));

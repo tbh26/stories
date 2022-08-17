@@ -1,46 +1,66 @@
 .container {
-  min-height: 100vw;
-  padding: 20px;
+    min-height: 100vw;
+    padding: 20px;
 
-  background: linear-gradient(to left, #eff, #ffe);
-  color: #222;
+    background: linear-gradient(to left, #eff, #ffe);
+    color: #222;
 }
 
 .primary-header {
-  font-size: 36px;
-  font-weight: 400;
-  letter-spacing: 2px;
+    font-size: 36px;
+    font-weight: 400;
+    letter-spacing: 2px;
 }
 
 .item {
-  margin: 4px;
-  padding: 8px;
-  border-radius: 4px;
-  background: #ddd;
-  list-style: none;
-  display: flex;
-  align-items: center;
+    margin: 4px;
+    padding: 8px;
+    border-radius: 4px;
+    background: #ddd;
+    list-style: none;
+    display: flex;
+    align-items: center;
 }
 
 .item > span {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .item > span > a {
-  color: inherit;
+    color: inherit;
 }
 
 .button {
-  background: transparent;
-  border: 2px solid #222;
-  border-radius: 4px;
-  padding: 4px;
-  cursor: pointer;
+    background: transparent;
+    border: 2px solid #222;
+    border-radius: 4px;
+    padding: 4px;
+    cursor: pointer;
 }
 
 .button:hover {
-  color: #eee;
-  background: #222;
+    color: #eee;
+    background: #222;
+}
+
+.search-form {
+    padding: 10px 0;
+    display: flex;
+    align-items: baseline;
+}
+
+.search-form > label {
+    padding: 8px;
+}
+
+.search-form input {
+    font-size: 20px;
+    letter-spacing: 1px;
+    padding: 8px;
+}
+
+.search-form > .button {
+    margin-left: 8px;
 }

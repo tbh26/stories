@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useRef, useState } from "react";
+import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 
 export const noFilter = '';
 export const noSearch = '';
@@ -102,7 +102,7 @@ const Parent = ({id, hasFocus = false}) => {
         dispatchStories({type: removeStory, payload: {objectId: id}});
     }
 
-    useEffect(() => {
+    const handleFetchStories = useCallback(() => {
         dispatchStories({type: fetchStories, payload: fetchStoriesState});
         let hnUrl = `${hnBaseApi}/search`;
         if (searchTerm !== noSearch) {
@@ -110,19 +110,24 @@ const Parent = ({id, hasFocus = false}) => {
         }
         const newStoriesState = {...initialStoriesState};
         fetch(hnUrl)
-            .then( (response) => response.json())
-            .then( (result) => {
+            .then((response) => response.json())
+            .then((result) => {
                 console.info(`hn api ${id} result:`, result);
                 newStoriesState.data = result.hits;
-                dispatchStories({type: processSuccess, payload: newStoriesState });
+                dispatchStories({type: processSuccess, payload: newStoriesState});
             })
-            .catch(() => dispatchStories({type : processFail, payload: storiesErrorState}));
-    }, [searchTerm]);
+            .catch(() => dispatchStories({type: processFail, payload: storiesErrorState}));
+    }, [searchTerm, id]);
+
+    useEffect(() => {
+        handleFetchStories();
+    }, [handleFetchStories]);
 
     return (
         <>
             <section>
-                <LabeledInput value={itemFilter} onInputChange={handleFilterUpdate} onKeyup={handleKeyUpdate} hasFocus={hasFocus}>
+                <LabeledInput value={itemFilter} onInputChange={handleFilterUpdate} onKeyup={handleKeyUpdate}
+                              hasFocus={hasFocus}>
                     <strong>Search:</strong>
                 </LabeledInput>
             </section>
@@ -159,7 +164,6 @@ const LabeledInput = ({value, onInputChange, onKeyup, type = 'text', hasFocus = 
         </label>
     );
 }
-
 
 const List = ({list, deleteItem}) => {
     if (list && list.length && list.length !== 0) {

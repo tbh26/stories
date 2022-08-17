@@ -24,7 +24,7 @@ const App = () => {
         <main className='container'>
 
             <header>
-                <h1>Hello {echoFun('react')} world.</h1>
+                <h1 className='primary-header'>Hello {echoFun('react')} world.</h1>
             </header>
 
             <Parent id='first'/>

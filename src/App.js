@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useReducer, useRef, useState } from "react";
+import {useCallback, useEffect, useReducer, useRef, useState} from "react";
 import axios from "axios";
-import './App.css';
+import styles from './App.module.css';
 
 export const noItem = '';
 export const fetchStories = 'OUTSET_FETCH_STORIES';
@@ -21,10 +21,10 @@ const App = () => {
     }
 
     return (
-        <main className='container'>
+        <main className={styles.container}>
 
             <header>
-                <h1 className='primary-header'>Hello {echoFun('react')} world.</h1>
+                <h1 className={styles['primary-header']}>Hello {echoFun('react')} world.</h1>
             </header>
 
             <Parent id='first'/>
@@ -140,11 +140,11 @@ const Parent = ({id, hasFocus = false}) => {
 }
 
 const SearchForm = ({inputItem, filterUpdate, searchSubmit, hasFocus}) => (
-    <form onSubmit={searchSubmit} className='search-form'>
+    <form onSubmit={searchSubmit} className={styles.searchForm}>
         <LabeledInput value={inputItem} onInputChange={filterUpdate} hasFocus={hasFocus}>
             <strong>Search for </strong>
         </LabeledInput>
-        <button className='button' type='submit'>search</button>
+        <button className={styles.button} type='submit'>search</button>
     </form>
 );
 
@@ -159,9 +159,9 @@ const LabeledInput = ({value, onInputChange, type = 'text', hasFocus = false, ch
     }, [hasFocus]);
 
     return (
-        <label>
+        <label className={styles.searchLabel}>
             {children} &nbsp;
-            <input value={value} onChange={onInputChange} type={type} ref={inputRef}/>
+            <input value={value} onChange={onInputChange} type={type} ref={inputRef} className={styles.searchInput}/>
         </label>
     );
 }
@@ -196,7 +196,7 @@ const Item = ({item, purgeItem}) => {
         objectID
     } = item;
     return (
-        <li className='item'>
+        <li className={styles.item}>
             <span style={{width: '40%'}}>
                 <a href={url}>{title}</a>
             </span>
@@ -206,7 +206,7 @@ const Item = ({item, purgeItem}) => {
             <span style={{width: '5%'}}>{num_comments}</span>
             <span style={{width: '10%'}}>points: </span>
             <span style={{width: '5%'}}>{points} &nbsp; </span>
-            <button style={{width: '5%'}} className='button' type='button' onClick={() => {
+            <button style={{width: '5%'}} className={styles.button} type='button' onClick={() => {
                 purgeItem(objectID)
             }}><strong>X</strong></button>
         </li>

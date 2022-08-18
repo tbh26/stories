@@ -43,24 +43,25 @@
 .button:hover {
     color: #eee;
     background: #222;
+    border: 4px solid #888;
 }
 
-.search-form {
+.searchForm {
     padding: 10px 0;
     display: flex;
     align-items: baseline;
 }
 
-.search-form > label {
+.searchLabel {
     padding: 8px;
 }
 
-.search-form input {
+.searchInput {
     font-size: 20px;
     letter-spacing: 1px;
     padding: 8px;
 }
 
-.search-form > .button {
+.searchForm > .button {
     margin-left: 8px;
 }

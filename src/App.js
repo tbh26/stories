@@ -210,21 +210,43 @@ const Item = ({item, purgeItem}) => {
         objectID
     } = item;
     return (
-        <li className={styles.item}>
-            <span style={{width: '40%'}}>
+        <StyledLiItem>
+            <SubItem width='40%'>
                 <a href={url}>{title}</a>
-            </span>
-            <span style={{width: '10%'}}>author: </span>
-            <span style={{width: '15%'}}>{author}</span>
-            <span style={{width: '10%'}}># comments: </span>
-            <span style={{width: '5%'}}>{num_comments}</span>
-            <span style={{width: '10%'}}>points: </span>
-            <span style={{width: '5%'}}>{points} &nbsp; </span>
+            </SubItem>
+            <SubItem width='10%'>author: </SubItem>
+            <SubItem width='15%'>{author}</SubItem>
+            <SubItem width='10%'># comments: </SubItem>
+            <SubItem>{num_comments}</SubItem>
+            <SubItem width='10%'>points: </SubItem>
+            <SubItem>{points}</SubItem>
             <button style={{width: '5%'}} className={styles.button} type='button' onClick={() => {
                 purgeItem(objectID)
             }}><strong>X</strong></button>
-        </li>
+        </StyledLiItem>
     );
 };
+
+const StyledLiItem = styled.li`
+  margin: 4px;
+  padding: 8px;
+  border-radius: 4px;
+  background: #ddd;
+  list-style: none;
+  display: flex;
+  align-items: center;
+`;
+
+const SubItem = styled.span`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  
+  a {
+    color: inherit;
+  }
+
+  width: ${({width = '5%'}) => width};
+`;
 
 export default App;

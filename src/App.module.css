@@ -1,26 +1,6 @@
 .container {
 }
 
-.item {
-    margin: 4px;
-    padding: 8px;
-    border-radius: 4px;
-    background: #ddd;
-    list-style: none;
-    display: flex;
-    align-items: center;
-}
-
-.item > span {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.item > span > a {
-    color: inherit;
-}
-
 .button {
     background: transparent;
     border: 2px solid #222;

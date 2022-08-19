@@ -1,6 +1,7 @@
 import {useCallback, useEffect, useReducer, useRef, useState} from "react";
 import axios from "axios";
 import styles from './App.module.css';
+import styled from 'styled-components';
 
 export const noItem = '';
 export const fetchStories = 'OUTSET_FETCH_STORIES';
@@ -21,10 +22,10 @@ const App = () => {
     }
 
     return (
-        <main className={styles.container}>
+        <Container id='container'>
 
             <header>
-                <h1 className={styles['primary-header']}>Hello {echoFun('react')} world.</h1>
+                <h1 className='primary-header'>Hello {echoFun('react')} world.</h1>
             </header>
 
             <Parent id='first'/>
@@ -33,9 +34,22 @@ const App = () => {
             <br/>
             <Parent id='last'/>
 
-        </main>
+        </Container>
     );
 }
+
+const Container = styled.div`
+  min-height: 100vw;
+  padding: 20px;
+  background: linear-gradient(to left, #eff, #ffe);
+  color: #222;
+
+  .primary-header {
+    font-size: 36px;
+    font-weight: 400;
+    letter-spacing: 2px;
+  }
+`;
 
 export function useStoredState(key, initialState) {
     const [value, setValue] = useState(localStorage.getItem(key) || initialState);

@@ -1,15 +1,4 @@
 .container {
-    min-height: 100vw;
-    padding: 20px;
-
-    background: linear-gradient(to left, #eff, #ffe);
-    color: #222;
-}
-
-.primary-header {
-    font-size: 36px;
-    font-weight: 400;
-    letter-spacing: 2px;
 }
 
 .item {

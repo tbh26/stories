@@ -1,6 +1,5 @@
 import {useCallback, useEffect, useReducer, useRef, useState} from "react";
 import axios from "axios";
-import styles from './App.module.css';
 import styled from 'styled-components';
 
 export const noItem = '';
@@ -133,7 +132,9 @@ const Parent = ({id, hasFocus = false}) => {
     return (
         <>
             <hr/>
-            <SearchForm inputItem={inputItem} filterUpdate={handleFilterUpdate} searchSubmit={handleSearchSubmit}
+            <SearchForm inputItem={inputItem}
+                        filterUpdate={handleFilterUpdate}
+                        searchSubmit={handleSearchSubmit}
                         hasFocus={hasFocus}/>
             <br/>
             {
@@ -154,13 +155,23 @@ const Parent = ({id, hasFocus = false}) => {
 }
 
 const SearchForm = ({inputItem, filterUpdate, searchSubmit, hasFocus}) => (
-    <form onSubmit={searchSubmit} className={styles.searchForm}>
+    <StyledSearchForm onSubmit={searchSubmit}>
         <LabeledInput value={inputItem} onInputChange={filterUpdate} hasFocus={hasFocus}>
             <strong>Search for </strong>
         </LabeledInput>
         <StyledButton type='submit'>search</StyledButton>
-    </form>
+    </StyledSearchForm>
 );
+
+const StyledSearchForm = styled.form`
+  padding: 10px 0;
+  display: flex;
+  align-items: baseline;
+
+  button {
+    margin-left: 8px;
+  }
+`;
 
 const StyledButton = styled.button`
   background: transparent;
@@ -186,12 +197,22 @@ const LabeledInput = ({value, onInputChange, type = 'text', hasFocus = false, ch
     }, [hasFocus]);
 
     return (
-        <label className={styles.searchLabel}>
+        <StyledLabeledInput>
             {children} &nbsp;
-            <input value={value} onChange={onInputChange} type={type} ref={inputRef} className={styles.searchInput}/>
-        </label>
+            <input value={value} onChange={onInputChange} type={type} ref={inputRef}/>
+        </StyledLabeledInput>
     );
 }
+
+const StyledLabeledInput = styled.label`
+  padding: 8px;
+
+  input {
+    font-size: 20px;
+    letter-spacing: 1px;
+    padding: 8px;
+  }
+`;
 
 const List = ({list, deleteItem}) => {
     if (list && list.length && list.length !== 0) {
@@ -254,7 +275,7 @@ const SubItem = styled.span`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  
+
   a {
     color: inherit;
   }

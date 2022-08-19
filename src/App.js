@@ -158,10 +158,23 @@ const SearchForm = ({inputItem, filterUpdate, searchSubmit, hasFocus}) => (
         <LabeledInput value={inputItem} onInputChange={filterUpdate} hasFocus={hasFocus}>
             <strong>Search for </strong>
         </LabeledInput>
-        <button className={styles.button} type='submit'>search</button>
+        <StyledButton type='submit'>search</StyledButton>
     </form>
 );
 
+const StyledButton = styled.button`
+  background: transparent;
+  border: 2px solid #222;
+  border-radius: 4px;
+  padding: 4px;
+  cursor: pointer;
+
+  :hover {
+    color: #eee;
+    background: #222;
+    border: 4px solid #888;
+  }
+`;
 
 const LabeledInput = ({value, onInputChange, type = 'text', hasFocus = false, children}) => {
     const inputRef = useRef();
@@ -220,9 +233,9 @@ const Item = ({item, purgeItem}) => {
             <SubItem>{num_comments}</SubItem>
             <SubItem width='10%'>points: </SubItem>
             <SubItem>{points}</SubItem>
-            <button style={{width: '5%'}} className={styles.button} type='button' onClick={() => {
+            <StyledButton style={{width: '5%'}} type='button' onClick={() => {
                 purgeItem(objectID)
-            }}><strong>X</strong></button>
+            }}><strong>X</strong></StyledButton>
         </StyledLiItem>
     );
 };

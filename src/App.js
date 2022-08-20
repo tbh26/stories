@@ -106,10 +106,17 @@ const storiesReducer = (state, action) => {
     }
 }
 
+function getSumComments(stories) {
+    const commentsCount = stories.data.reduce((result, value) => result + value.num_comments, 0);
+    console.debug('getSumComments count:', commentsCount);
+    return commentsCount;
+}
+
 const Parent = ({id, hasFocus = false}) => {
     const key = `${id}.searchTerm`;
     const [stories, dispatchStories] = useReducer(storiesReducer, initialStoriesState);
     const [inputItem, setInputItem] = useStoredState(key, noItem);
+
     console.debug(`Parent component.   (id: ${id}) `);
 
     const handleFilterUpdate = (event) => {
@@ -149,6 +156,8 @@ const Parent = ({id, hasFocus = false}) => {
         handleFetchStories();
     }
 
+    const sumComments = getSumComments(stories);
+
     return (
         <>
             <hr/>
@@ -167,7 +176,7 @@ const Parent = ({id, hasFocus = false}) => {
             }
             <br/>
             <aside>
-                == {id} filter: &ldquo;{inputItem}&rdquo; ==
+                == {id} filter: &ldquo;{inputItem}&rdquo;, # total comments: {sumComments} ==
             </aside>
             <hr/>
         </>
@@ -272,7 +281,7 @@ const Item = ({item, purgeItem}) => {
             </SubItem>
             <SubItem width='10%'>author: </SubItem>
             <SubItem width='15%'>{author}</SubItem>
-            <SubItem width='10%'># comments: </SubItem>
+            <SubItem width='15%'># comments: </SubItem>
             <SubItem>{num_comments}</SubItem>
             <SubItem width='10%'>points: </SubItem>
             <SubItem>{points}</SubItem>

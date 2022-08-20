@@ -62,10 +62,18 @@ const Container = styled.div`
 `;
 
 export function useStoredState(key, initialState) {
+    const isMounted = useRef(false);
+
     const [value, setValue] = useState(localStorage.getItem(key) || initialState);
 
     useEffect(() => {
-        localStorage.setItem(key, value);
+        if (!isMounted.current) {
+            console.debug(`useStoredState, skip initial render.   (key: ${key})`);
+            isMounted.current = true;
+        } else {
+            console.debug(`useStoredState, key: ${key}, value: ${value}`);
+            localStorage.setItem(key, value);
+        }
     }, [key, value])
 
     return [value, setValue];

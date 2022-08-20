@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useReducer, useRef, useState } from "react";
 import axios from "axios";
 import styled from 'styled-components';
 import { ReactComponent as Check } from './check.svg';
@@ -110,6 +110,7 @@ const Parent = ({id, hasFocus = false}) => {
     const key = `${id}.searchTerm`;
     const [stories, dispatchStories] = useReducer(storiesReducer, initialStoriesState);
     const [inputItem, setInputItem] = useStoredState(key, noItem);
+    console.debug(`Parent component.   (id: ${id}) `);
 
     const handleFilterUpdate = (event) => {
         const searchTerm = event.target.value;
@@ -121,10 +122,10 @@ const Parent = ({id, hasFocus = false}) => {
         return stories.data;
     }
 
-    const removeItem = (id) => {
+    const removeItem = useCallback((id) => {
         console.debug(`remove story with id: ${id}.`);
         dispatchStories({type: removeStory, payload: {objectId: id}});
-    }
+    }, []);
 
     const handleFetchStories = useCallback(async () => {
         dispatchStories({type: fetchStories, payload: fetchStoriesState});
@@ -233,8 +234,9 @@ const StyledLabeledInput = styled.label`
   }
 `;
 
-const List = ({list, deleteItem}) => {
+const List = memo(({list, deleteItem}) => {
     if (list && list.length && list.length !== 0) {
+        console.debug(`List component (${list.length} items). `);
         return (
             <ul style={{paddingLeft: 0}}>
                 {
@@ -245,13 +247,14 @@ const List = ({list, deleteItem}) => {
             </ul>
         );
     } else {
+        console.debug('List component (no entries).');
         return (
             <section>
                 <b>-</b>
             </section>
         );
     }
-}
+});
 
 const Item = ({item, purgeItem}) => {
     const {
@@ -292,9 +295,11 @@ const StyledLiItem = styled.li`
   list-style: none;
   display: flex;
   align-items: center;
+
   button {
     padding-top: 8px;
   }
+
   button svg {
     fill: red;
   }

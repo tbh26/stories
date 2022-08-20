@@ -1,8 +1,17 @@
-import { memo, useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
-import axios from "axios";
+import React, {
+    memo,
+    MutableRefObject,
+    useCallback,
+    useEffect,
+    useMemo,
+    useReducer,
+    useRef,
+    useState
+} from 'react';
+import axios from 'axios';
 import styled from 'styled-components';
-import { ReactComponent as Check } from './check.svg';
-import { ReactComponent as Dismiss } from './X.svg';
+import { ReactComponent as Check } from './assets/check.svg';
+import { ReactComponent as Dismiss } from './assets/X.svg';
 
 export const noItem = '';
 export const fetchStories = 'OUTSET_FETCH_STORIES';
@@ -14,12 +23,18 @@ export const initialStoriesState = {data: noStories, isLoading: false, loadError
 export const fetchStoriesState = {data: noStories, isLoading: true, loadError: false};
 export const storiesErrorState = {data: noStories, isLoading: false, loadError: true};
 
+type StoriesState = {
+    data: Story[];
+    isLoading: boolean;
+    loadError: boolean;
+}
+
 const hnBaseApi = 'https://hn.algolia.com/api/v1';
 
 const App = () => {
 
-    function echoFun(mesg) {
-        return mesg;
+    function echoFun(message: string): string {
+        return message;
     }
 
     return (
@@ -61,7 +76,7 @@ const Container = styled.div`
   }
 `;
 
-export function useStoredState(key, initialState) {
+export function useStoredState(key: string, initialState: string): [string, (newValue: string) => void] {
     const isMounted = useRef(false);
 
     const [value, setValue] = useState(localStorage.getItem(key) || initialState);
@@ -79,7 +94,7 @@ export function useStoredState(key, initialState) {
     return [value, setValue];
 }
 
-const storiesReducer = (state, action) => {
+const storiesReducer = (state: StoriesState, action: { type: string; payload: any }) => {
     console.debug('storiesReducer, action: ', action);
     let newState = {...state};
     switch (action.type) {
@@ -96,7 +111,7 @@ const storiesReducer = (state, action) => {
             return newState;
         case removeStory:
             newState.data = state.data.filter(
-                (story) => action.payload.objectId !== story.objectID
+                (story: Story) => action.payload.objectId !== story.objectID
             );
             console.debug('(sr) remove story; newState:', newState);
             return newState;
@@ -106,30 +121,45 @@ const storiesReducer = (state, action) => {
     }
 }
 
-function getSumComments(stories) {
+type Story = {
+    objectID: string;
+    url: string;
+    title: string;
+    author: string;
+    num_comments: number;
+    points: number;
+};
+
+function getSumComments(stories: { data: Story[] }): number {
     const commentsCount = stories.data.reduce((result, value) => result + value.num_comments, 0);
     console.debug('getSumComments count:', commentsCount);
     return commentsCount;
 }
 
-const Parent = ({id, hasFocus = false}) => {
+type ParentProps = {
+    id: string;
+    hasFocus?: boolean;
+}
+
+const Parent = ({id, hasFocus = false}: ParentProps) => {
     const key = `${id}.searchTerm`;
     const [stories, dispatchStories] = useReducer(storiesReducer, initialStoriesState);
     const [inputItem, setInputItem] = useStoredState(key, noItem);
 
     console.debug(`Parent component.   (id: ${id}) `);
 
-    const handleFilterUpdate = (event) => {
+    const handleFilterUpdate = (event: React.ChangeEvent<HTMLInputElement>) => {
         const searchTerm = event.target.value;
-        console.debug('keyChange event: ', event);
+        // console.debug('keyChange event: ', event);
+        console.debug('keyChange (event) search-term: ', searchTerm);
         setInputItem(searchTerm);
     }
 
-    function getStories() {
+    function getStories(): Story[] {
         return stories.data;
     }
 
-    const removeItem = useCallback((id) => {
+    const removeItem = useCallback((id: string) => {
         console.debug(`remove story with id: ${id}.`);
         dispatchStories({type: removeStory, payload: {objectId: id}});
     }, []);
@@ -151,7 +181,7 @@ const Parent = ({id, hasFocus = false}) => {
         }
     }, [inputItem, id]);
 
-    const handleSearchSubmit = (e) => {
+    const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         handleFetchStories();
     }
@@ -183,7 +213,14 @@ const Parent = ({id, hasFocus = false}) => {
     );
 }
 
-const SearchForm = ({inputItem, filterUpdate, searchSubmit, hasFocus}) => (
+type SearchFormProps = {
+    inputItem: string;
+    filterUpdate: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    searchSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+    hasFocus: boolean;
+};
+
+const SearchForm = ({inputItem, filterUpdate, searchSubmit, hasFocus}: SearchFormProps) => (
     <StyledSearchForm onSubmit={searchSubmit}>
         <LabeledInput value={inputItem} onInputChange={filterUpdate} hasFocus={hasFocus}>
             <strong>Search for </strong>
@@ -216,8 +253,17 @@ const StyledButton = styled.button`
   }
 `;
 
-const LabeledInput = ({value, onInputChange, type = 'text', hasFocus = false, children}) => {
-    const inputRef = useRef();
+type LabeledInputProps = {
+    value: string;
+    onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    type?: string;
+    hasFocus?: boolean;
+    children?: React.ReactNode;
+}
+
+const LabeledInput = ({value, onInputChange, type = 'text', hasFocus = false, children}: LabeledInputProps) => {
+    // const inputRef = useRef<HTMLInputElement>();
+    const inputRef = useRef() as MutableRefObject<HTMLInputElement>;
 
     useEffect(() => {
         if (hasFocus && inputRef.current) {
@@ -243,7 +289,12 @@ const StyledLabeledInput = styled.label`
   }
 `;
 
-const List = memo(({list, deleteItem}) => {
+type ListProps = {
+    list: Story[];
+    deleteItem: (id: string) => void;
+};
+
+const List = memo(({list, deleteItem}: ListProps) => {
     if (list && list.length && list.length !== 0) {
         console.debug(`List component (${list.length} items). `);
         return (
@@ -264,8 +315,12 @@ const List = memo(({list, deleteItem}) => {
         );
     }
 });
+type ItemProps = {
+    item: Story;
+    purgeItem: (id: string) => void;
+};
 
-const Item = ({item, purgeItem}) => {
+const Item = ({item, purgeItem}: ItemProps) => {
     const {
         url,
         title,
@@ -282,7 +337,7 @@ const Item = ({item, purgeItem}) => {
             <SubItem width='10%'>author: </SubItem>
             <SubItem width='15%'>{author}</SubItem>
             <SubItem width='15%'># comments: </SubItem>
-            <SubItem>{num_comments}</SubItem>
+            {num_comments ? <SubItem>{num_comments}</SubItem> : <SubItem> - </SubItem>}
             <SubItem width='10%'>points: </SubItem>
             <SubItem>{points}</SubItem>
             <StyledButton style={{width: '5%'}}
@@ -314,6 +369,10 @@ const StyledLiItem = styled.li`
   }
 `;
 
+type SubItemProp = {
+    width?: string;
+}
+
 const SubItem = styled.span`
   white-space: nowrap;
   overflow: hidden;
@@ -323,7 +382,7 @@ const SubItem = styled.span`
     color: inherit;
   }
 
-  width: ${({width = '5%'}) => width};
+  width: ${({width = '5%'}: SubItemProp) => width};
 `;
 
 export default App;

@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useReducer, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import axios from "axios";
 import styled from 'styled-components';
 import { ReactComponent as Check } from './check.svg';
@@ -156,7 +156,7 @@ const Parent = ({id, hasFocus = false}) => {
         handleFetchStories();
     }
 
-    const sumComments = getSumComments(stories);
+    const sumComments = useMemo(() => getSumComments(stories), [stories]);
 
     return (
         <>

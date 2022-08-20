@@ -1,6 +1,8 @@
-import {useCallback, useEffect, useReducer, useRef, useState} from "react";
+import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import axios from "axios";
 import styled from 'styled-components';
+import { ReactComponent as Check } from './check.svg';
+import { ReactComponent as Dismiss } from './X.svg';
 
 export const noItem = '';
 export const fetchStories = 'OUTSET_FETCH_STORIES';
@@ -24,7 +26,7 @@ const App = () => {
         <Container id='container'>
 
             <header>
-                <h1 className='primary-header'>Hello {echoFun('react')} world.</h1>
+                <h1 className='primary-header'>Hello {echoFun('react')} world. <Check height='36px' width='36px'/></h1>
             </header>
 
             <Parent id='first'/>
@@ -47,6 +49,15 @@ const Container = styled.div`
     font-size: 36px;
     font-weight: 400;
     letter-spacing: 2px;
+  }
+
+  .primary-header svg {
+    margin: auto 2px;
+    fill: green;
+  }
+
+  .primary-header svg:hover {
+    fill: blue;
   }
 `;
 
@@ -254,9 +265,13 @@ const Item = ({item, purgeItem}) => {
             <SubItem>{num_comments}</SubItem>
             <SubItem width='10%'>points: </SubItem>
             <SubItem>{points}</SubItem>
-            <StyledButton style={{width: '5%'}} type='button' onClick={() => {
-                purgeItem(objectID)
-            }}><strong>X</strong></StyledButton>
+            <StyledButton style={{width: '5%'}}
+                          type='button'
+                          onClick={() => {
+                              purgeItem(objectID)
+                          }}>
+                <Dismiss height='16px' width='16px'/>
+            </StyledButton>
         </StyledLiItem>
     );
 };
@@ -269,6 +284,12 @@ const StyledLiItem = styled.li`
   list-style: none;
   display: flex;
   align-items: center;
+  button {
+    padding-top: 8px;
+  }
+  button svg {
+    fill: red;
+  }
 `;
 
 const SubItem = styled.span`

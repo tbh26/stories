@@ -8,7 +8,7 @@ import App, {
     noStories,
     processFail,
     processSuccess,
-    removeStory,
+    removeStory, SearchForm, SearchFormProps,
     storiesErrorState,
     storiesReducer,
     StoriesState,
@@ -109,12 +109,46 @@ describe('Item component', function () {
     test('button', function () {
         const removeIdMock = jest.fn();
         render(<Item item={storyTwo} purgeItem={removeIdMock}/>);
-        screen.debug();
+        //screen.debug();
         fireEvent.click(screen.getByRole('button'));
         expect(removeIdMock).toHaveBeenCalledTimes(1);
         expect(removeIdMock).not.toHaveBeenCalledWith(storyThree.objectID);
         expect(removeIdMock).toHaveBeenCalledWith(storyTwo.objectID);
     });
+});
+
+describe('SearchForm component', function () {
+    const sfProps: SearchFormProps = {
+        inputItem: 'React',
+        searchSubmit: jest.fn(),
+        filterUpdate: jest.fn(),
+        hasFocus: true
+    };
+
+    test('basic rendering', function () {
+        render(<SearchForm {...sfProps}  />);
+        //screen.debug();
+        const labelElement = screen.getByLabelText(/Search/);
+        // console.debug('labelElement:', labelElement);
+        expect(labelElement).toBeInTheDocument();
+    });
+
+    test('update input', function () {
+        render(<SearchForm {...sfProps}  />);
+        const inputElement = screen.getByDisplayValue(sfProps.inputItem);
+        fireEvent.change(inputElement, {target: {value: 'rxjs'}});
+        expect(sfProps.filterUpdate).toHaveBeenCalledTimes(1);
+        //expect(sfProps.inputItem).toBe('rxjs'); // oops, no update :)
+    });
+
+    test('(click) submit', function () {
+        render(<SearchForm {...sfProps}  />);
+        const buttonElement = screen.getByRole('button');
+        const once = 1;
+        fireEvent.submit(buttonElement);
+        expect(sfProps.searchSubmit).toHaveBeenCalledTimes(once);
+    });
+
 });
 
 describe('something truthy and falsy', function () {

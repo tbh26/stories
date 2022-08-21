@@ -12,9 +12,9 @@ describe('App component', () => {
 
 describe('something truthy and falsy', () => {
     test('is true', () => {
-        expect(true).toBe(true);
+        expect(true).toBeTruthy();
     });
     it('is false', () => {
-        expect(false).not.toBe(true);
+        expect(false).toBeFalsy();
     });
 });

@@ -23,7 +23,7 @@ export const initialStoriesState = {data: noStories, isLoading: false, loadError
 export const fetchStoriesState = {data: noStories, isLoading: true, loadError: false};
 export const storiesErrorState = {data: noStories, isLoading: false, loadError: true};
 
-type StoriesState = {
+export type StoriesState = {
     data: Story[];
     isLoading: boolean;
     loadError: boolean;
@@ -95,7 +95,7 @@ export function useStoredState(key: string, initialState: string): [string, (new
     return [value, setValue];
 }
 
-const storiesReducer = (state: StoriesState, action: { type: string; payload: any }) => {
+export const storiesReducer = (state: StoriesState, action: { type: string; payload: any }) => {
     console.debug('storiesReducer, action: ', action);
     let newState = {...state};
     switch (action.type) {
@@ -112,7 +112,7 @@ const storiesReducer = (state: StoriesState, action: { type: string; payload: an
             return newState;
         case removeStory:
             newState.data = state.data.filter(
-                (story: Story) => action.payload.objectId !== story.objectID
+                (story: Story) => action.payload.objectID !== story.objectID
             );
             console.debug('(sr) remove story; newState:', newState);
             return newState;
@@ -122,8 +122,8 @@ const storiesReducer = (state: StoriesState, action: { type: string; payload: an
     }
 }
 
-type Story = {
-    objectID: string;
+export type Story = {
+    objectID: number;
     url: string;
     title: string;
     author: string;
@@ -160,9 +160,9 @@ const Parent = ({id, hasFocus = false}: ParentProps) => {
         return stories.data;
     }
 
-    const removeItem = useCallback((id: string) => {
+    const removeItem = useCallback((id: number) => {
         console.debug(`remove story with id: ${id}.`);
-        dispatchStories({type: removeStory, payload: {objectId: id}});
+        dispatchStories({type: removeStory, payload: {objectID: id}});
     }, []);
 
     const handleFetchStories = useCallback(async () => {
@@ -292,7 +292,7 @@ const StyledLabeledInput = styled.label`
 
 type ListProps = {
     list: Story[];
-    deleteItem: (id: string) => void;
+    deleteItem: (id: number) => void;
 };
 
 const List = memo(({list, deleteItem}: ListProps) => {
@@ -318,7 +318,7 @@ const List = memo(({list, deleteItem}: ListProps) => {
 });
 type ItemProps = {
     item: Story;
-    purgeItem: (id: string) => void;
+    purgeItem: (id: number) => void;
 };
 
 const Item = ({item, purgeItem}: ItemProps) => {

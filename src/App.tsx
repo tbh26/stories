@@ -50,6 +50,7 @@ const App = () => {
             <br/>
             <Parent id='last'/>
 
+            <footer><h2>footer</h2></footer>
         </Container>
     );
 }

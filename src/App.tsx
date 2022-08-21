@@ -214,14 +214,14 @@ const Parent = ({id, hasFocus = false}: ParentProps) => {
     );
 }
 
-type SearchFormProps = {
+export type SearchFormProps = {
     inputItem: string;
     filterUpdate: (e: React.ChangeEvent<HTMLInputElement>) => void;
     searchSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
     hasFocus: boolean;
 };
 
-const SearchForm = ({inputItem, filterUpdate, searchSubmit, hasFocus}: SearchFormProps) => (
+export const SearchForm = ({inputItem, filterUpdate, searchSubmit, hasFocus}: SearchFormProps) => (
     <StyledSearchForm onSubmit={searchSubmit}>
         <LabeledInput value={inputItem} onInputChange={filterUpdate} hasFocus={hasFocus}>
             <strong>Search for </strong>

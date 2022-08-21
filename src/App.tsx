@@ -321,7 +321,7 @@ type ItemProps = {
     purgeItem: (id: number) => void;
 };
 
-const Item = ({item, purgeItem}: ItemProps) => {
+export const Item = ({item, purgeItem}: ItemProps) => {
     const {
         url,
         title,

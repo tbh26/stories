@@ -104,17 +104,17 @@ export const storiesReducer = (state: StoriesState, action: { type: string; payl
             return fetchStoriesState;
         case processSuccess:
             newState = {data: action.payload.data, isLoading: false, loadError: false};
-            console.debug('(sr) process success result; newstate:', newState);
+            console.debug('(sr) process success result; new state:', newState);
             return newState;
         case processFail:
             newState = storiesErrorState;
-            console.debug('(sr) process failure; newstate:', newState);
+            console.debug('(sr) process failure; new state:', newState);
             return newState;
         case removeStory:
             newState.data = state.data.filter(
                 (story: Story) => action.payload.objectID !== story.objectID
             );
-            console.debug('(sr) remove story; newState:', newState);
+            console.debug('(sr) remove story; new state:', newState);
             return newState;
         default:
             console.error(`storiesReducer, unknown action type: ${action.type}`);

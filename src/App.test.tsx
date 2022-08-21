@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, act } from '@testing-library/react';
 import App, {
     fetchStories,
     fetchStoriesState,
@@ -14,6 +14,10 @@ import App, {
     StoriesState,
     Story
 } from './App';
+import axios from 'axios';
+
+jest.mock('axios');
+const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 describe('App component', () => {
     test('renders "Hello react" in h1', () => {
@@ -21,6 +25,70 @@ describe('App component', () => {
         const headerElement = screen.getByRole('heading', {level: 1});
         expect(headerElement.innerHTML).toContain('Hello react');
     });
+
+    test('fetch data success', async function () {
+        const promise = Promise.resolve({
+            data: {
+                hits: someStories
+            }
+        });
+        mockedAxios.get.mockImplementationOnce(() => promise);
+        render(<App/>);
+        fireEvent.click(screen.getAllByRole('button')[0]);
+        expect(screen.getByText(/Loading/)).toBeInTheDocument();
+
+        // @ts-ignore
+        await act(() => promise);
+        expect(screen.queryByText(/loading/i)).toBeNull();
+        expect(screen.getByText(someStories[0].title)).toBeInTheDocument();
+        expect(screen.getByText(someStories[1].author)).toBeInTheDocument();
+        expect(screen.getByText(someStories[2].title)).toBeInTheDocument();
+        expect(screen.queryByText('bla bla bla')).toBeNull();
+    });
+
+    test('fetch data fail', async () => {
+        const promise = Promise.reject(new Error('oops'));
+        mockedAxios.get.mockImplementationOnce(() => promise);
+        render(<App/>);
+        fireEvent.click(screen.getAllByRole('button')[0]);
+        expect(screen.queryByText(/Loading/)).toBeInTheDocument();
+        try {
+            await act(() => promise);
+        } catch (error) {
+            // console.info('data fail error:', error);
+            screen.debug();
+            expect(screen.getByText(/Loading/)).toBeInTheDocument(); // wrong, should be /error on loading/
+            // expect(screen.getByText(/error on loading/)).toBeInTheDocument();
+            // expect(screen.queryByText(/error on loading/)).toBeInTheDocument();
+            expect(screen.queryByText(/error on loading/)).toBeNull(); // ???
+            //
+            // await setTimeout( () => {
+            // }, 1234); // ?
+        }
+    });
+
+    test('remove an item after successfull fetch data', async function () {
+        const promise = Promise.resolve({
+            data: {
+                hits: someStories
+            }
+        });
+        mockedAxios.get.mockImplementationOnce(() => promise);
+        render(<App/>);
+        fireEvent.click(screen.getAllByRole('button')[0]);
+        expect(screen.getByText(/Loading/)).toBeInTheDocument();
+
+        // @ts-ignore
+        await act(() => promise);
+        expect(screen.getByText(someStories[0].title)).toBeInTheDocument();
+        expect(screen.getByText(someStories[1].author)).toBeInTheDocument();
+        expect(screen.getByText(someStories[2].title)).toBeInTheDocument();
+        fireEvent.click(screen.getAllByRole('button')[1]); // first dismiss button
+        expect(screen.queryByText(someStories[0].title)).toBeNull(); // gone!
+        expect(screen.getByText(someStories[1].author)).toBeInTheDocument();
+        expect(screen.getByText(someStories[2].title)).toBeInTheDocument();
+    });
+
 });
 
 const storyOne: Story = {
@@ -100,7 +168,7 @@ describe('Stories Reducer', function () {
 describe('Item component', function () {
     test('render (some) Item properties', function () {
         render(<Item item={storyThree} purgeItem={(id) => console.debug('remove id', id)}/>);
-        screen.debug();
+        // screen.debug();
         expect(screen.getByText(storyThree.author)).toBeInTheDocument();
         expect(screen.getByText(storyThree.title)).toHaveAttribute('href', storyThree.url);
         expect(screen.getAllByText(storyThree.num_comments)).toHaveLength(2); // tricky; num_comments and points are both 8

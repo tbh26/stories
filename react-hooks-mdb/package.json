@@ -10,6 +10,7 @@
     "eslint": "eslint src/**/*.ts?",
     "prettier": "prettier --write .",
     "prepare": "husky install",
+    "prepare2": "cd .. && husky install react-hooks-mdb/.husky",
     "lint-staged": "lint-staged"
   },
   "dependencies": {

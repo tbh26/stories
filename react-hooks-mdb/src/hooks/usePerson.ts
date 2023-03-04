@@ -4,10 +4,11 @@ import { Person } from "../types/person"
 //import { initialPerson } from "../utils"
 import { sleep } from "../utils"
 import { useIsMounted } from "./useIsMounted"
+import { useDebounce } from "./useDebounce"
 
 
 function savePerson(person: Person | null): void {
-  console.info(`saving person: ${person}`)
+  console.info('saving', { person } )
   localforage.setItem("person", person)
 }
 
@@ -27,9 +28,9 @@ export function usePerson(initialPerson: Person) {
     getPerson()
   }, [initialPerson, isMounted])
 
-  useEffect(() => {
+  useDebounce(() => {
     savePerson(person)
-  }, [person])
+  }, 1234)
 
   return [person, setPerson] as const
 }

@@ -1,15 +1,16 @@
-import * as localforage from "localforage"
-import React, { ReactElement, useEffect, useRef, useState } from "react"
+// import * as localforage from "localforage"
+import React, { ReactElement, useEffect, useRef } from "react"
 
 import { LabeledInput, Loading } from "../components"
 import { usePerson } from "../hooks/usePerson"
-import { Person } from "../types/person"
 import { initialPerson } from "../utils"
+// import { Person } from "../types/person"
 
-function savePerson(person: Person | null): void {
-  console.info(`saving person: ${person}`)
-  localforage.setItem("person", person)
-}
+//// moved into usePerson
+// function savePerson(person: Person | null): void {
+//   console.info(`saving person: ${person}`)
+//   localforage.setItem("person", person)
+// }
 
 export function PersonEditor(): ReactElement {
   // const person = initialPerson
@@ -62,12 +63,14 @@ export function PersonEditor(): ReactElement {
           setPerson(newPerson)
           if (newPerson.firstname === "Pipo") {
             setPerson((state) => {
-              const newState = {
-                ...state!,
+              if (!state) {
+                return state
+              }
+              return {
+                ...state,
                 surname: "de Clown",
                 phone: '012 9753 468'
               }
-              return newState
             })
           }
         }}

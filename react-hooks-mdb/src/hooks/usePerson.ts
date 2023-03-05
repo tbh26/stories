@@ -1,5 +1,5 @@
 import localforage from "localforage"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { Person } from "../types/person"
 //import { initialPerson } from "../utils"
 import { sleep } from "../utils"
@@ -28,9 +28,14 @@ export function usePerson(initialPerson: Person) {
     getPerson()
   }, [initialPerson, isMounted])
 
-  useDebounce(() => {
+  // useDebounce(() => {
+  //   savePerson(person)
+  // }, 1234)
+
+  const cachedSavePerson = useCallback( () => {
     savePerson(person)
-  }, 1234)
+  }, [person])
+  useDebounce(cachedSavePerson, 1234)
 
   return [person, setPerson] as const
 }

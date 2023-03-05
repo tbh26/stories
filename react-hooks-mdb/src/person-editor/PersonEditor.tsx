@@ -1,5 +1,5 @@
 // import * as localforage from "localforage"
-import React, { ReactElement, useEffect, useRef } from "react"
+import React, { ReactElement, useEffect, useRef, useState } from "react"
 
 import { LabeledInput, Loading } from "../components"
 import { usePerson } from "../hooks/usePerson"
@@ -24,6 +24,12 @@ export function PersonEditor(): ReactElement {
       firstInput.current?.focus()
     }, 531)
 
+  }, [])
+
+  const [, setNow] = useState((new Date()).getTime())
+  useEffect(() => {
+    const handle = setInterval(() => setNow((new Date()).getTime()), 1600)
+    return () => clearInterval(handle)
   }, [])
 
   // useEffect(() => {
